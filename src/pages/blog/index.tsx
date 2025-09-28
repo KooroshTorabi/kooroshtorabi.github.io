@@ -1,24 +1,40 @@
 import { GetStaticProps } from "next";
-import { getSortedPostsData, PostData } from "../../lib/posts";
+import Link from "next/link";
+import { getAllPosts } from "../../lib/posts";
 
-interface Props {
-  allPostsData: PostData[];
+interface Post {
+  slug: string;
+  title: string;
+  date: string;
 }
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  const allPostsData = getSortedPostsData();
-  return { props: { allPostsData } };
+interface BlogProps {
+  posts: Post[];
+}
+
+export const getStaticProps: GetStaticProps<BlogProps> = async () => {
+  const posts = getAllPosts();
+  return {
+    props: { posts },
+  };
 };
 
-export default function Blog({ allPostsData }: Props) {
+export default function Blog({ posts }: BlogProps) {
   return (
-    <ul>
-      {allPostsData.map(({ id, title, date }) => (
-        <li key={id}>
-          <h2>{title}dfdfdf</h2>
-          <p>{date}</p>
-        </li>
-      ))}
-    </ul>
+    <div>
+      <h1>بلاگ</h1>
+      <ul>
+        {posts.map(({ slug, title, date }) => (
+          <li key={slug}>
+            <Link href={`/blog/${slug}`}>
+              <a>{title}</a>
+            </Link>
+            <small> - {date}</small>
+          </li>
+        ))}
+      </ul>
+      <br />
+      <a href="/">صفحه اصلی </a>
+    </div>
   );
 }

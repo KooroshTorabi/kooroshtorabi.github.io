@@ -1,30 +1,50 @@
-// lib/posts.ts
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
 
-const postsDirectory = path.join(process.cwd(), "/src/pages/blog/posts");
+const postsDirectory = path.join(process.cwd(), './src/pages/blog/posts');
 
-export interface PostData {
-  id: string;
-  title: string;
-  date: string;
+function slugify(title: string): string {
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/--+/g, '-');
 }
 
-export function getSortedPostsData(): PostData[] {
+export function getAllPosts() {
   const fileNames = fs.readdirSync(postsDirectory);
-  const allPostsData = fileNames.map((fileName) => {
-    const id = fileName.replace(/\.md$/, "");
+
+  const posts = fileNames.map(fileName => {
     const fullPath = path.join(postsDirectory, fileName);
-    const fileContents = fs.readFileSync(fullPath, "utf8");
-    const matterResult = matter(fileContents);
+    const fileContents = fs.readFileSync(fullPath, 'utf8');
+    const { data } = matter(fileContents);
 
     return {
-      id,
-      title: matterResult.data.title as string,
-      date: matterResult.data.date as string,
+      filename: fileName,
+      slug: slugify(data.title),
+      title: data.title,
+      date: data.date,
     };
   });
 
-  return allPostsData.sort((a, b) => (a.date < b.date ? 1 : -1));
+  return posts;
+}
+
+export function getPostBySlug(slug: string) {
+  const posts = getAllPosts();
+  const post = posts.find(p => p.slug === slug);
+  if (!post) return null;
+
+  const fullPath = path.join(postsDirectory, post.filename);
+  const fileContents = fs.readFileSync(fullPath, 'utf8');
+  const { data, content } = matter(fileContents);
+
+  return {
+    slug,
+    title: data.title,
+    date: data.date,
+    content,
+  };
 }
