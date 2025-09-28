@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 
-const postsDirectory = path.join(process.cwd(), "/src/pages/posts");
+const postsDirectory = path.join(process.cwd(), "/src/pages/blog/posts");
 
 export interface PostData {
   id: string;
