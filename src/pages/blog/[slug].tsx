@@ -52,7 +52,7 @@ export default function Post({ title, date, contentHtml }: PostProps) {
         <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
       </article>
       <br />
-      <a href="/">صفحه اصلی </a>
+      <a href="/">Main Page</a>
     </>
   );
 }

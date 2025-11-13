@@ -22,7 +22,7 @@ export const getStaticProps: GetStaticProps<BlogProps> = async () => {
 export default function Blog({ posts }: BlogProps) {
   return (
     <div>
-      <h1>بلاگ</h1>
+      <h1>Blog</h1>
       <ul>
         {posts.map(({ slug, title, date }) => (
           <li key={slug}>
@@ -34,7 +34,7 @@ export default function Blog({ posts }: BlogProps) {
         ))}
       </ul>
       <br />
-      <a href="/">صفحه اصلی </a>
+      <a href="/">Main Page</a>
     </div>
   );
 }
