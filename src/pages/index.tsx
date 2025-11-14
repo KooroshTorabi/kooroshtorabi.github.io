@@ -118,18 +118,11 @@ export default function HomePage() {
 //     },
 //   };
 // }
-
-// ... (سایر ایمپورت ها)
-
-// ... (کامپوننت HomePage)
-
-// 👈 تابع جدید: getStaticProps
 export async function getStaticProps({ locale }: { locale: string }) {
+  // Next.js به طور خودکار locale را برای صفحه اصلی فراهم می کند
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
-      // اختیاری: تنظیم revalidate اگر بخواهید محتوا را به‌صورت دوره‌ای به‌روزرسانی کنید (ISR)
-      // revalidate: 60 * 60, // مثلا هر یک ساعت
     },
   };
 }
