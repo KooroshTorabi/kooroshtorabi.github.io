@@ -4,7 +4,6 @@ import { marked } from "marked";
 import type { GetStaticPaths, GetStaticPropsContext } from "next"; // اضافه کردن GetStaticPropsContext
 import { useTranslation } from "next-i18next"; // 👈 ایمپورت هوک ترجمه
 import { serverSideTranslations } from "next-i18next/serverSideTranslations"; // 👈 ایمپورت i18n
-import nextConfig from "../../../next.config"; // 👈 ایمپورت تنظیمات i18n (مسیردهی به بیرون src)
 import { getAllPosts, getPostBySlug } from "../../lib/posts";
 
 // 👈 اضافه کردن i18n: TFunction (از next-i18next)
@@ -23,7 +22,7 @@ interface PostProps {
 export const getStaticPaths: GetStaticPaths = async () => {
   const posts = getAllPosts();
   // 👈 استخراج ایمن زبان‌ها
-  const locales = nextConfig.i18n?.locales || ["fa", "en", "de"];
+  const locales = ["fa", "en", "de"];
 
   const paths: Array<{ params: { slug: string }; locale: string }> = [];
 
