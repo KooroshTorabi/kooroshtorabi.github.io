@@ -21,8 +21,11 @@ interface PostProps {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const posts = getAllPosts();
+
+  const envLocales = process.env.NEXT_PUBLIC_LOCALES;
+
   // 👈 استخراج ایمن زبان‌ها
-  const locales = ["fa", "en", "de"];
+  const locales = envLocales ? envLocales.split(",") : ["fa", "en", "de"];
 
   const paths: Array<{ params: { slug: string }; locale: string }> = [];
 
