@@ -15,17 +15,11 @@ interface PostProps {
   _nextI18Next?: {};
 }
 
-// ----------------------------------------------------
-// 1. getStaticPaths: تولید مسیرها برای هر زبان
-// ----------------------------------------------------
-
 export const getStaticPaths: GetStaticPaths = async () => {
   const posts = getAllPosts();
 
-  const envLocales = process.env.NEXT_PUBLIC_LOCALES;
-
-  // 👈 استخراج ایمن زبان‌ها
-  const locales = envLocales ? envLocales.split(",") : ["fa", "en", "de"];
+  // 👈 لیست زبان‌ها به صورت Hardcode شده برای جلوگیری از خطای CI/CD
+  const locales = ["fa", "en", "de"];
 
   const paths: Array<{ params: { slug: string }; locale: string }> = [];
 
@@ -33,7 +27,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     posts.forEach((post) => {
       paths.push({
         params: { slug: post.slug },
-        locale: locale, // 👈 تعیین زبان برای مسیر
+        locale: locale,
       });
     });
   }
@@ -44,13 +38,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-// ----------------------------------------------------
-// 2. getStaticProps: لود کردن محتوا و ترجمه‌ها
-// ----------------------------------------------------
-
 export async function getStaticProps({
   params,
-  locale = "fa", // 👈 دریافت locale از context
+  locale = "en",
 }: GetStaticPropsContext<{ slug: string }>): Promise<
   { props: PostProps } | { notFound: true }
 > {
@@ -63,12 +53,12 @@ export async function getStaticProps({
 
   const contentHtml = await marked(post.content);
 
-  // 👈 لود کردن ترجمه‌ها (مانند common.json)
+  // لود کردن ترجمه‌ها (common)
   const translationProps = await serverSideTranslations(locale, ["common"]);
 
   return {
     props: {
-      ...translationProps, // 👈 اضافه کردن props ترجمه
+      ...translationProps,
       title: post.title,
       date: post.date,
       contentHtml,
