@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+// import "./globals.css";
 
 import localFont from "next/font/local";
 
@@ -46,8 +46,14 @@ export default function RootLayout({
       <body
         className={`antialiased bg-red text-black dark:bg-black dark:text-white ${pixelifySans.variable}`}
       >
-        <div className={`min-h-screen flex flex-col ${pixelifySans.variable}`}>
-          <p>hellooo</p>
+        <div
+          className={`bg-red-400 min-h-screen flex flex-col ${pixelifySans.variable}`}
+        >
+          <p
+            className={`bg-red-400 min-h-screen flex flex-col ${pixelifySans.variable}`}
+          >
+            hellooo111qqq
+          </p>
 
           {children}
         </div>

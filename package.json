@@ -11,6 +11,7 @@
     "kourosh": "echo 'Hello, Kourosh!'"
   },
   "dependencies": {
+    "@tailwindcss/cli": "^4.1.17",
     "@types/react-router-dom": "^5.3.3",
     "framer-motion": "^12.23.22",
     "gray-matter": "^4.0.3",
