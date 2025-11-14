@@ -22,8 +22,11 @@ const PixlifyFont = Pixelify_Sans({
 export default function HomePage() {
   return (
     <div
-      className={`min-h-screen flex flex-col bg-pink-500 p-20  ${PixlifyFont.className}`}
+      className={`min-h-screen flex flex-col bg-pink-500 p-10  ${PixlifyFont.className}`}
     >
+      <div className="bg-green-600 min-h-screen p-10">
+        استایل Tailwind اعمال شده است!
+      </div>
       <div className="min-h-screen flex items-center justify-center">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h1 className="text-5xl md:text-6xl font-bold  mb-133">
