@@ -110,11 +110,26 @@ export default function HomePage() {
 
 // 👈 تابع getServerSideProps: ضروری برای Pages Router
 // این تابع در سرور اجرا می شود و فایل ترجمه مورد نیاز برای زبان فعلی را لود می کند.
-export async function getServerSideProps({ locale }: { locale: string }) {
-  // لود کردن فایل common.json برای زبان فعلی (locale)
+// export async function getServerSideProps({ locale }: { locale: string }) {
+//   // لود کردن فایل common.json برای زبان فعلی (locale)
+//   return {
+//     props: {
+//       ...(await serverSideTranslations(locale, ["common"])),
+//     },
+//   };
+// }
+
+// ... (سایر ایمپورت ها)
+
+// ... (کامپوننت HomePage)
+
+// 👈 تابع جدید: getStaticProps
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale, ["common"])),
+      // اختیاری: تنظیم revalidate اگر بخواهید محتوا را به‌صورت دوره‌ای به‌روزرسانی کنید (ISR)
+      // revalidate: 60 * 60, // مثلا هر یک ساعت
     },
   };
 }
