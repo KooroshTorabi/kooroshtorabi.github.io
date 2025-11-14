@@ -1,13 +1,12 @@
 // src/pages/_app.tsx
 
-// 🚨 این آدرس باید دقیق باشد
-// اگر globals.css را به src/styles منتقل کردید:
 import "@styles/globals.css";
-
+import { appWithTranslation } from "next-i18next";
 import type { AppProps } from "next/app";
+import nextI18NextConfig from "../../next-i18next.config"; // مسیر دهی صحیح
 
 function MyApp({ Component, pageProps }: AppProps) {
   return <Component {...pageProps} />;
 }
 
-export default MyApp;
+export default appWithTranslation(MyApp, nextI18NextConfig);

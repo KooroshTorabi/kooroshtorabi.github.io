@@ -3,9 +3,13 @@ import ArrowRight from "@icons/arrow-right.svg";
 // import Linkedin from "@/assets/icons/linkedin.svg";
 // import Mail from "@/assets/icons/mail.svg";
 import Button from "@ui/Button";
+import LanguageSwitcher from "@ui/LanguageSwitcher";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { Bokor, Pixelify_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router"; // برای تغییر مسیر و زبان
 
 const BokorFont = Bokor({
   subsets: ["latin"],
@@ -20,16 +24,36 @@ const PixlifyFont = Pixelify_Sans({
 });
 
 export default function HomePage() {
+  const { t, i18n } = useTranslation("common");
+  const router = useRouter();
+
+  const currentLocale = router.locale;
+
+  const changeLanguage = (currentLng: string | undefined) => {
+    const supportedLocales = ["fa", "en", "de"];
+    const currentIndex = supportedLocales.indexOf(currentLng + "");
+    // انتخاب زبان بعدی در لیست (و بازگشت به اول در صورت رسیدن به آخر)
+    const nextIndex = (currentIndex + 1) % supportedLocales.length;
+    const nextLng = supportedLocales[nextIndex];
+
+    router.push(router.asPath, router.asPath, { locale: nextLng });
+  };
+
   return (
     <div
-      className={`min-h-screen flex flex-col bg-pink-500 p-10  ${PixlifyFont.className}`}
+      className={`min-h-screen flex flex-col bg-stone-900 p-10  ${PixlifyFont.className}`}
     >
-      <div className="bg-green-600 min-h-screen p-10">
-        استایل Tailwind اعمال شده است!
+      {/* دکمه‌های تغییر زبان */}
+      <div className="space-x-4">
+        <h1 className="text-4xl mb-6">{t("welcome")}</h1>
+        {/* 👈 قرار دادن دراپ‌داون در بالا/کنار صفحه */}
+        <div className="absolute top-4 right-4 w-full max-w-xs flex justify-end">
+          <LanguageSwitcher />
+        </div>
       </div>
       <div className="min-h-screen flex items-center justify-center">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold  mb-133">
+          <h1 className="text-5xl md:text-6xl font-bold  mb-3">
             Creative Developer & Designer
           </h1>
 
@@ -82,4 +106,15 @@ export default function HomePage() {
       </div>
     </div>
   );
+}
+
+// 👈 تابع getServerSideProps: ضروری برای Pages Router
+// این تابع در سرور اجرا می شود و فایل ترجمه مورد نیاز برای زبان فعلی را لود می کند.
+export async function getServerSideProps({ locale }: { locale: string }) {
+  // لود کردن فایل common.json برای زبان فعلی (locale)
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
 }
