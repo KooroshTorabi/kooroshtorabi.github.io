@@ -1,0 +1,17 @@
+{
+  "editor.cursorBlinking": "smooth",
+  "editor.cursorHeight": 0,
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.cursorSurroundingLines": 0,
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.cursorStyle": "block",
+  "terminal.integrated.cursorStyleInactive": "outline",
+  "terminal.integrated.cursorWidth": 1,
+  "python.terminal.focusAfterLaunch": false,
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports": true
+  }
+}
