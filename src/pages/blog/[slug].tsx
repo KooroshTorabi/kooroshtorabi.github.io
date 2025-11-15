@@ -19,7 +19,15 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const posts = getAllPosts();
 
   // 👈 لیست زبان‌ها به صورت Hardcode شده برای جلوگیری از خطای CI/CD
-  const locales = ["fa", "en", "de"];
+  // const locales = ["fa", "en", "de"];
+
+  // const paths: Array<{ params: { slug: string }; locale: string }> = [];
+
+  // خواندن از Env Var یا استفاده از لیست پیش‌فرض
+  const envLocales = process.env.NEXT_PUBLIC_LOCALES;
+
+  // تبدیل رشته "fa,en,de" به آرایه یا استفاده از پیش‌فرض
+  const locales = envLocales ? envLocales.split(",") : ["fa", "en", "de"];
 
   const paths: Array<{ params: { slug: string }; locale: string }> = [];
 
