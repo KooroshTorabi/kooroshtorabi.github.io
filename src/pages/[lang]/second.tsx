@@ -31,6 +31,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   return {
     props: {
       messages: (await import(`../../messages/${lang}.json`)).default,
+      locale: lang,
     },
   };
 };

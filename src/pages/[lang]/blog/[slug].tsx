@@ -69,6 +69,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       frontmatter,
       content: htmlContent,
       messages: (await import(`../../../messages/${lang}.json`)).default,
+      locale: lang,
     },
   };
 };
