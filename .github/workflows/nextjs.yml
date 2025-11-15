@@ -1,7 +1,5 @@
 # Sample workflow for building and deploying a Next.js site to GitHub Pages
-#
-# To get started with Next.js see: https://nextjs.org/docs/getting-started
-#
+
 name: Deploy Next.js site to Pages
 
 on:
@@ -18,8 +16,7 @@ permissions:
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+# Allow only one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -31,6 +28,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Detect package manager
         id: detect-package-manager
         run: |
@@ -40,46 +38,38 @@ jobs:
             echo "runner=yarn" >> $GITHUB_OUTPUT
             exit 0
           elif [ -f "${{ github.workspace }}/package.json" ]; then
+            # 👈 اصلاح: تغییر 'command' از 'ci' به 'install'
+            # 'install' می‌تواند بدون lock file کار کند و برای نصب اولیه امن‌تر است.
             echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
+            echo "command=install" >> $GITHUB_OUTPUT
             echo "runner=npx --no-install" >> $GITHUB_OUTPUT
             exit 0
           else
             echo "Unable to determine package manager"
             exit 1
           fi
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          # ❌ حذف Cache: برای جلوگیری از تداخلات بیلد قبلی
           # cache: ${{ steps.detect-package-manager.outputs.manager }}
+      
+      # ❌ حذف بخش Restore cache (کامنت شده در فایل اصلی شما)
+
+      - name: Install dependencies
+        # این دستور اکنون با 'npm install' اجرا می‌شود و دیگر fail نمی‌کند.
+        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
-          # Automatically inject basePath in your Next.js configuration file and disable
-          # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
-          #
-          # You may remove this line if you want to manage the configuration yourself.
           static_site_generator: next
-      # - name: Restore cache
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: |
-      #       .next/cache
-      #     # Generate a new cache whenever packages or source files change.
-      #     key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-      #     # If source files changed but packages didn't, rebuild from a prior cache.
-      #     restore-keys: |
-      #       ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
-      - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-      - name: Build with Next.js
-        run: |
-          # 👈 حذف پوشه .next برای اطمینان از Clean Build
-          rm -rf .next 
-          npm run build
-      - name: Build with Next.js
+
+      - name: Build and Export Next.js (Clean Build)
         env:
+          # 👈 تعریف متغیر محیطی برای اطمینان بیشتر در صورت نیاز کد
           NEXT_PUBLIC_LOCALES: "fa,en,de"
         run: |
           echo "Running clean build and export..."
@@ -91,6 +81,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
+          # 👈 آپلود پوشه out که توسط 'next export' تولید شده است
           path: ./out
 
   # Deployment job
