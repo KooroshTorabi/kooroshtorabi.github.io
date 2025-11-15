@@ -1,9 +1,16 @@
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { GetStaticProps, GetStaticPaths } from 'next';
 
-export default function IndexPage() {
-  const t = useTranslations('Index');
-  return <h1>{t('title')}</h1>;
+export default function SecondPage() {
+  const t = useTranslations('Second');
+  return (
+    <div className="bg-blue-500 text-stone-600">
+      <h1>{t('title')}</h1>
+      <p>{t('content')}</p>
+      <Link href="/">Main page</Link>
+    </div>
+  );
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {

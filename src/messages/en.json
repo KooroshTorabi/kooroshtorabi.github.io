@@ -19,5 +19,12 @@
     "description": "I am always open to new opportunities and collaborations. Send me a message!",
     "formTitle": "Send a Quick Note",
     "instructions": "Fill out the form below or email me directly at hello@example.com."
+  },
+  "Index": {
+    "title": "Welcome to the Main Page"
+  },
+  "Second": {
+    "title": "This is the Second Page",
+    "content": "Here is some content for the second page."
   }
 }
