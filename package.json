@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack && npm run postbuild",
-    "postbuild": "echo '<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;url=/en\"></head><body></body></html>' > out/index.html",
+    "postbuild": "node scripts/postbuild.js",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",

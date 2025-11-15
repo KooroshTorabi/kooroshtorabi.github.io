@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl';
 import { GetStaticProps, GetStaticPaths } from 'next';
+import { locales } from '../../../i18n.config.js';
 
 export default function IndexPage() {
   const t = useTranslations('Index');
@@ -8,10 +9,7 @@ export default function IndexPage() {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: [
-      { params: { lang: 'en' } },
-      { params: { lang: 'fa' } },
-    ],
+    paths: locales.map(lang => ({ params: { lang } })),
     fallback: false,
   };
 }

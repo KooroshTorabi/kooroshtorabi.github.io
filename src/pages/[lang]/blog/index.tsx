@@ -3,6 +3,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import Link from 'next/link';
 import { GetStaticProps, GetStaticPaths } from 'next';
+import { locales } from '../../../../i18n.config.js';
 
 interface Frontmatter {
   title: string;
@@ -41,10 +42,7 @@ const BlogIndex: React.FC<BlogIndexProps> = ({ posts, lang }) => {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: [
-      { params: { lang: 'en' } },
-      { params: { lang: 'fa' } },
-    ],
+    paths: locales.map(lang => ({ params: { lang } })),
     fallback: false,
   };
 }

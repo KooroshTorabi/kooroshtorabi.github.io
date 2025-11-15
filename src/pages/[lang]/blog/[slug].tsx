@@ -3,6 +3,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import { marked } from 'marked';
 import { GetStaticProps, GetStaticPaths } from 'next';
+import { locales } from '../../../../i18n.config.js';
 
 interface Frontmatter {
   title: string;
@@ -30,15 +31,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const filenames = fs.readdirSync(postsDirectory);
   const paths = [];
 
-  for (const filename of filenames) {
-    const [slug, lang] = filename.replace('.md', '').split('.');
-    if (slug && lang) {
-      paths.push({
-        params: {
-          lang,
-          slug,
-        },
-      });
+  for (const lang of locales) {
+    const langFiles = filenames.filter(name => name.endsWith(`.${lang}.md`));
+    for (const filename of langFiles) {
+      const slug = filename.replace(`.${lang}.md`, '');
+      paths.push({ params: { lang, slug } });
     }
   }
 
@@ -55,7 +52,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const { lang, slug } = context.params as { lang: string; slug: string };
   const filePath = path.join(process.cwd(), '_posts', `${slug}.${lang}.md`);
 
-  // Check if file exists before reading
   if (!fs.existsSync(filePath)) {
     return { notFound: true };
   }
