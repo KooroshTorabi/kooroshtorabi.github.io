@@ -23,6 +23,7 @@
       // "@/*": ["./*"],
       // "@components/*": ["./src/components/*"],
       "@lib/*": ["./src/lib/*"],
+      "@messages/*": ["./src/messages/*"],
       "@pages/*": ["./src/pages/*"],
       "@styles/*": ["./src/styles/*"],
       "@public/*": ["./public/*"],
@@ -39,7 +40,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next-i18next.config.js",
-    "next.config.js"
+    "next.config.ts"
   ],
   "exclude": ["node_modules"]
 }

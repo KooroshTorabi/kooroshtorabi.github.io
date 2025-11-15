@@ -1,15 +1,12 @@
+// src/pages/index.tsx
 import ArrowRight from "@icons/arrow-right.svg";
-// import Github from "@/assets/icons/github.svg";
-// import Linkedin from "@/assets/icons/linkedin.svg";
-// import Mail from "@/assets/icons/mail.svg";
+import { messagesMap } from "@src/messages";
 import Button from "@ui/Button";
 import LanguageSwitcher from "@ui/LanguageSwitcher";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslations } from "next-intl";
 import { Bokor, Pixelify_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router"; // برای تغییر مسیر و زبان
 
 const BokorFont = Bokor({
   subsets: ["latin"],
@@ -24,19 +21,12 @@ const PixlifyFont = Pixelify_Sans({
 });
 
 export default function HomePage() {
-  const { t, i18n } = useTranslation("common");
-  const router = useRouter();
-
-  const currentLocale = router.locale;
-
-  const changeLanguage = (currentLng: string | undefined) => {
-    const supportedLocales = ["fa", "en", "de"];
-    const currentIndex = supportedLocales.indexOf(currentLng + "");
-    // انتخاب زبان بعدی در لیست (و بازگشت به اول در صورت رسیدن به آخر)
-    const nextIndex = (currentIndex + 1) % supportedLocales.length;
-    const nextLng = supportedLocales[nextIndex];
-
-    router.push(router.asPath, router.asPath, { locale: nextLng });
+  const t = useTranslations(); // 👈 دریافت ترجمه‌ها
+  // برای تغییر زبان، مسیر را دوباره بارگذاری می‌کنیم
+  const switchLocale = (locale: string) => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("lng", locale); // optional query param
+    window.location.href = url.toString();
   };
 
   return (
@@ -46,7 +36,6 @@ export default function HomePage() {
       {/* دکمه‌های تغییر زبان */}
       <div className="space-x-4">
         <h1 className="text-4xl mb-6">{t("welcome")}</h1>
-        {/* 👈 قرار دادن دراپ‌داون در بالا/کنار صفحه */}
         <div className="absolute top-4 right-4 w-full max-w-xs flex justify-end">
           <LanguageSwitcher />
         </div>
@@ -85,7 +74,7 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className="text-slate-600 hover:text-slate-900 transition-colors"
             >
-              {/* <Github className="w-6 h-6" /> */}
+              {/* Github icon */}
             </a>
             <a
               href="https://linkedin.com"
@@ -93,13 +82,13 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className="text-slate-600 hover:text-slate-900 transition-colors"
             >
-              {/* <Linkedin className="w-6 h-6" /> */}
+              {/* Linkedin icon */}
             </a>
             <a
               href="mailto:hello@example.com"
               className="text-slate-600 hover:text-slate-900 transition-colors"
             >
-              {/* <Mail className="w-6 h-6" /> */}
+              {/* Mail icon */}
             </a>
           </div>
         </div>
@@ -108,21 +97,15 @@ export default function HomePage() {
   );
 }
 
-// 👈 تابع getServerSideProps: ضروری برای Pages Router
-// این تابع در سرور اجرا می شود و فایل ترجمه مورد نیاز برای زبان فعلی را لود می کند.
-// export async function getServerSideProps({ locale }: { locale: string }) {
-//   // لود کردن فایل common.json برای زبان فعلی (locale)
-//   return {
-//     props: {
-//       ...(await serverSideTranslations(locale, ["common"])),
-//     },
-//   };
-// }
-export async function getStaticProps({ locale }: { locale: string }) {
-  // Next.js به طور خودکار locale را برای صفحه اصلی فراهم می کند
+// ----------------------------------------------------
+// getStaticProps برای next-intl
+// ----------------------------------------------------
+export async function getStaticProps({ locale }: { locale?: string }) {
+  const messages = messagesMap[locale ?? "en"] || messagesMap["en"];
+
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["common"])),
+      messages,
     },
   };
 }
