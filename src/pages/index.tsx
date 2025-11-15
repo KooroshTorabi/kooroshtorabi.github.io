@@ -53,9 +53,9 @@ export default function HomePage() {
       </div>
       <div className="min-h-screen flex items-center justify-center">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold  mb-3">
-            Creative Developer & Designer
-          </h1>
+          <h3 className="text-5xl md:text-6xl font-bold  mb-3">
+            Kourosh Torabijafroudi
+          </h3>
 
           <p className="font-inter text-xl text-slate-600 mb-12 max-w-2xl mx-auto leading-relaxed">
             I'm driven by curiosity and a love for problem-solving — I get
