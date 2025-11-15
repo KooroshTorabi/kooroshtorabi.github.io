@@ -79,9 +79,9 @@ jobs:
           rm -rf .next 
           npm run build
       - name: Build with Next.js
-        run: ${{ steps.detect-package-manager.outputs.runner }} next build
         env:
           NEXT_PUBLIC_LOCALES: "fa,en,de"
+        run: ${{ steps.detect-package-manager.outputs.runner }} next build 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
