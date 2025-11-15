@@ -1,14 +1,11 @@
-// next.config.ts
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // 💥 این تنظیم برای GitHub Pages الزامی است 💥
+  output: "export",
 
-const nextConfig: NextConfig = {
-  /* config options here */
-
-  i18n: {
-    locales: ["fa", "en", "de"],
-    defaultLocale: "en",
-    localeDetection: false,
+  images: {
+    unoptimized: true,
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

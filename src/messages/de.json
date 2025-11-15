@@ -1,6 +1,24 @@
 {
-  "welcome": "Willkommen auf meiner Website!",
-  "blog": "Blog",
-  "change-language": "فارسی",
-  "main-page": "Hauptseite"
+  "dir": "ltr",
+  "welcome": "Willkommen auf meiner Portfolio-Webseite",
+  "title": "Ein Full-Stack-Entwickler mit Fokus auf Leistung und UX",
+  "description": "Ich nutze mein Fachwissen in React, Next.js und der Entwicklung skalierbarer Architekturen, um schnelle, zuverlässige und benutzerfreundliche Weblösungen zu schaffen.",
+  "viewResume": "Lebenslauf anzeigen",
+  "getInTouch": "Kontakt aufnehmen",
+  "uniqueContent": "Dieser Abschnitt wird über den Schlüssel 'uniqueContent' in der Datei de.json gelesen.",
+  "backToHome": "Zurück zur Startseite",
+
+  "resume": {
+    "title": "Arbeits- und Ausbildung Lebenslauf",
+    "description": "Eine umfassende Zusammenfassung meiner beruflichen Laufbahn, Ausbildung und technischen Fähigkeiten über die Jahre.",
+    "experience": "Berufserfahrung (Auswahl)",
+    "experienceDetails": "Ich habe 6 Jahre lang als Senior Software Engineer bei führenden Technologieunternehmen gearbeitet. Mein Fokus lag auf der Optimierung von Ladezeiten, der Implementierung von CI/CD und dem Aufbau hochleistungsfähiger React-Benutzeroberflächen. Mein letztes Großprojekt umfasste die Migration eines alten MVC-Systems auf eine Micro-Frontend-Architektur, was zu einer 50%igen Reduzierung des TTFB führte."
+  },
+
+  "contact": {
+    "title": "Kontaktieren Sie mich",
+    "description": "Wenn Sie ein Projekt im Sinn haben oder einfach nur Hallo sagen möchten, senden Sie mir bitte eine Nachricht über das unten stehende Formular. Ich werde umgehend antworten.",
+    "formTitle": "Formular für direkte Nachricht",
+    "instructions": "Bitte geben Sie Ihre Daten (Name, E-Mail, Nachricht) sorgfältig ein, damit ich effektiv antworten kann."
+  }
 }

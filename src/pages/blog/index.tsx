@@ -1,7 +1,6 @@
-import { GetStaticProps } from "next";
+import type { GetStaticProps } from "next";
 import Link from "next/link";
 import { getAllPosts } from "../../lib/posts";
-import localFont from "next/font/local";
 
 interface Post {
   slug: string;
@@ -20,9 +19,6 @@ export const getStaticProps: GetStaticProps<BlogProps> = async () => {
   };
 };
 
-
-
-
 export default function Blog({ posts }: BlogProps) {
   return (
     <div className="px-8 py-6">
@@ -30,7 +26,10 @@ export default function Blog({ posts }: BlogProps) {
       <ul>
         {posts.map(({ slug, title, date }) => (
           <li key={slug}>
-            <Link href={`/blog/${slug}`} className="pixelify-sans-regular  text-2xl text-blue-600 hover:underline">
+            <Link
+              href={`/blog/${slug}`}
+              className="pixelify-sans-regular  text-2xl text-blue-600 hover:underline"
+            >
               {title}
             </Link>
             <small> - {date}</small>

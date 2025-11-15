@@ -53,7 +53,7 @@ export async function getStaticProps({
 
   return {
     props: {
-      messages,
+      messages: messages as Record<string, string>,
       title: post.title,
       date: post.date,
       contentHtml,

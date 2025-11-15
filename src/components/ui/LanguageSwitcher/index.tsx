@@ -1,6 +1,6 @@
-import Image from "next/image";
-import { useRouter } from "next/router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
+// حذف کامل وابستگی به Next.js Router (useRouter) برای جلوگیری از خطای کامپایل و تضمین کارکرد در Static Export
 
 const languageOptions = [
   {
@@ -14,36 +14,81 @@ const languageOptions = [
   { code: "de", name: "Deutsch", flag: "🇩🇪", type: "emoji", dir: "ltr" },
 ];
 
+// منطق استخراج locale از URL سمت کلاینت
+const getClientLocale = () => {
+  if (typeof window === "undefined") return "en"; // سمت سرور: پیش فرض
+
+  // فرض می‌کنیم زبان پیش‌فرض (en) پیشوند ندارد.
+  // بررسی می‌کند که آیا مسیر با /fa/ یا /de/ شروع شده است.
+  const path = window.location.pathname.toLowerCase();
+  const knownLocales = ["fa", "de"];
+
+  for (const locale of knownLocales) {
+    if (path.startsWith(`/${locale}/`) || path === `/${locale}`) {
+      return locale;
+    }
+  }
+
+  return "en"; // زبان پیش فرض
+};
+
 const LanguageSwitcher = () => {
-  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
-  const currentLocale = router.locale || "en";
+  const currentLocale = getClientLocale();
 
   const currentLanguage =
     languageOptions.find((lang) => lang.code === currentLocale) ||
     languageOptions[0];
 
-  const changeLanguage = (lng: string) => {
-    setIsOpen(false);
+  // محاسبه مسیر پایه (مسیر بدون پیشوند زبان)
+  const baseHref = useMemo(() => {
+    if (typeof window === "undefined") return "/";
 
-    // مسیر فعلی را با locale جدید push می‌کنیم
-    router.push(router.asPath, router.asPath, { locale: lng });
-  };
+    let path = window.location.pathname;
 
+    // اگر مسیر با زبان فعلی شروع شده، آن را حذف می‌کنیم
+    if (currentLocale !== "en" && path.startsWith(`/${currentLocale}`)) {
+      path = path.substring(`/${currentLocale}`.length);
+    }
+
+    // اطمینان از اینکه مسیر ریشه همیشه "/" باشد اگر پس از حذف پیشوند خالی بود
+    return path || "/";
+  }, [currentLocale]);
+
+  // 💡 نکته مهم: در حالت Static Export با Next.js، نمی‌توان از next/image استفاده کرد.
+  // باید از تگ <img> استاندارد استفاده کنیم.
   const renderFlag = (lang: (typeof languageOptions)[0], size: number = 30) => {
     if (lang.type === "image") {
       return (
-        <Image
+        <img
           src={lang.flag}
           alt={lang.name}
           width={size}
           height={size}
           className="mr-1 object-contain"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src =
+              "https://placehold.co/30x30/f87171/0c0a09?text=Flag";
+          }}
         />
       );
     }
     return <span className="text-xl mr-1">{lang.flag}</span>;
+  };
+
+  const getNewHref = (targetLocale: string) => {
+    // 3. تولید مسیر نهایی با توجه به زبان جدید
+    const cleanedBaseHref = baseHref === "/" ? "" : baseHref;
+
+    if (targetLocale === "en") {
+      // برای زبان پیش فرض (en)، پیشوند زبان را حذف می‌کنیم
+      return cleanedBaseHref || "/";
+    }
+
+    // برای زبان‌های دیگر، پیشوند زبان را اضافه می‌کنیم
+    return `/${targetLocale}${cleanedBaseHref}`;
   };
 
   return (
@@ -83,16 +128,17 @@ const LanguageSwitcher = () => {
             {languageOptions
               .filter((lang) => lang.code !== currentLocale)
               .map((lang) => (
-                <button
+                // 💥 استفاده از تگ <a> برای مسیریابی استاتیک
+                <a
                   key={lang.code}
-                  type="button"
-                  onClick={() => changeLanguage(lang.code)}
+                  href={getNewHref(lang.code)}
                   role="menuitem"
+                  onClick={() => setIsOpen(false)}
                   className="flex items-center w-full px-3 py-2 text-sm text-white hover:bg-amber-700"
                 >
                   {renderFlag(lang)}
                   {lang.name}
-                </button>
+                </a>
               ))}
           </div>
         </div>

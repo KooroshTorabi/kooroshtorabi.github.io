@@ -1,21 +1,13 @@
-// src/pages/_app.tsx
 import "@styles/globals.css";
 import { IntlProvider } from "next-intl";
 import type { AppProps } from "next/app";
 
-// لیست زبان‌ها از env یا پیش‌فرض
-const DEFAULT_LOCALES = ["fa", "en", "de"];
-export const LOCALES = process.env.NEXT_PUBLIC_LOCALES
-  ? process.env.NEXT_PUBLIC_LOCALES.split(",")
-  : DEFAULT_LOCALES;
-
-function MyApp({ Component, pageProps, router }: AppProps) {
-  const locale = router.locale ?? LOCALES[0]; // همیشه یک string قطعی
-
+function MyApp({ Component, pageProps }: AppProps) {
   return (
+    // Ensuring the fallback locale matches the application's new default (en)
     <IntlProvider
-      messages={pageProps.messages || {}} // اگر messages undefined بود، یک object خالی بده
-      locale={router.locale ?? LOCALES[0]} // fallback پیش‌فرض
+      messages={pageProps.messages || {}}
+      locale={pageProps.locale || "en"} // Changed fallback from 'fa' to 'en'
     >
       <Component {...pageProps} />
     </IntlProvider>

@@ -1,6 +1,23 @@
 {
-  "welcome": "Welcome to my website!",
-  "blog": "Blog",
-  "change-language": "فارسی",
-  "main-page": "Main Page"
+  "dir": "ltr",
+  "welcome": "Hello There!",
+  "title": "Kourosh Torabi | Software Engineer",
+  "description": "Full-stack developer focused on creating scalable, high-performance web applications using modern JavaScript frameworks and serverless architecture.",
+  "uniqueContent": "This content shows that translation is working correctly.",
+  "viewResume": "View Resume",
+  "getInTouch": "Get In Touch",
+  "backToHome": "← Back to Home",
+
+  "resume": {
+    "title": "My Resume & Experience",
+    "description": "A brief overview of my professional career, skills, and education.",
+    "experience": "Key Experience",
+    "experienceDetails": "Currently leading the frontend development team for a major e-commerce platform, focusing on performance optimization and component library maintenance."
+  },
+  "contact": {
+    "title": "Contact Me",
+    "description": "I am always open to new opportunities and collaborations. Send me a message!",
+    "formTitle": "Send a Quick Note",
+    "instructions": "Fill out the form below or email me directly at hello@example.com."
+  }
 }
