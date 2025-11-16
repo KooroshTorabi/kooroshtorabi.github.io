@@ -25,7 +25,7 @@ function TextMesh({ text }: TextMeshProps) {
   // ⚠️ رفرنس برای هدف نور (برای دنبال کردن مرکز)
   const targetRef = useRef<THREE.Object3D>(null!);
 
-  camera.position.y = 0;
+  camera.position.y = -300;
   // 2. انیمیشن حرکت دوربین به عقب
   useFrame((state, delta) => {
     const speed = 25;
@@ -39,11 +39,11 @@ function TextMesh({ text }: TextMeshProps) {
     // 🟢 اصلاح حرکت Y: افزایش سرعت حرکت Y برای حفظ زاویه
     camera.position.y -= speed * delta; // 0.5 یک مقدار تقریبی است
 
-    // 3. ریست دوربین (برای لوپ شدن)
-    if (camera.position.y < -1200) {
+    // // 3. ریست دوربین (برای لوپ شدن)
+    if (camera.position.y < -1050) {
       // بازگشت به موقعیت شروع: Y=400, Z=400
       // camera.position.z = 400;
-      camera.position.y = 0;
+      camera.position.y = -300;
     }
   });
   // 3. رندر کامپوننت <Text> از Drei
@@ -107,9 +107,17 @@ export default function TextCrawlCanvas({ children }: TextCrawlCanvasProps) {
     <Canvas
       // 🟢 اصلاح Y دوربین: موقعیت شروع را بسیار بالاتر می‌بریم تا Y=0 متن، پایین فریم باشد.
       // Z=400 را برای عمق و FOV 45 را برای پرسپکتیو حفظ می‌کنیم.
+      resize={{ scroll: false, offsetSize: false }}
       camera={{ fov: 45, position: [0, -110, 100] }}
-      style={{ height: "100%", width: "100%", background: "transparent" }}
       shadows
+      frameloop="always"
+      style={{
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        background: "transparent",
+      }}
     >
       <EffectComposer>
         <Bloom

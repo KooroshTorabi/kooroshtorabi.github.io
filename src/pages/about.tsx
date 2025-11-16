@@ -10,7 +10,7 @@ import dynamic from "next/dynamic";
 import { Bokor, Pixelify_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/router"; // برای تغییر مسیر و زبان
 
 const BokorFont = Bokor({
   subsets: ["latin"],
@@ -26,10 +26,10 @@ const PixlifyFont = Pixelify_Sans({
 const TextCrawlCanvas = dynamic<{ children: React.ReactNode }>(
   () => import("../components/ui/TextCrawl"),
   {
-    ssr: false,
+    ssr: false, // 👈 این خط حیاتی است!
     loading: () => (
       <div className="h-96 flex items-center justify-center text-white">
-        Loading...
+        در حال بارگذاری تیتراژ...
       </div>
     ),
   },
@@ -45,6 +45,7 @@ export default function HomePage() {
   const changeLanguage = (currentLng: string | undefined) => {
     const supportedLocales = ["fa", "en", "de"];
     const currentIndex = supportedLocales.indexOf(currentLng + "");
+    // انتخاب زبان بعدی در لیست (و بازگشت به اول در صورت رسیدن به آخر)
     const nextIndex = (currentIndex + 1) % supportedLocales.length;
     const nextLng = supportedLocales[nextIndex];
 
@@ -69,17 +70,8 @@ export default function HomePage() {
             {t("mainHeading")}
           </h1>
 
-          {/* Desktop version (show TextCrawlCanvas) */}
-
-          <div className="relative h-96 w-full mb-12 overflow-hidden">
-            <div className="absolute inset-0 pointer-events-none">
-              <TextCrawlCanvas>{t("introParagraph")}</TextCrawlCanvas>
-            </div>
-          </div>
-
-          {/* Mobile version (simple div text) */}
-          <div className="relative h-48 w-full mb-12 rounded-lg overflow-hidden bg-stone-800 text-white p-4 block md:hidden">
-            {t("introParagraph")}
+          <div className="relative h-96 w-full mb-12  rounded-lg overflow-hidden">
+            <TextCrawlCanvas>{t("introParagraph")}</TextCrawlCanvas>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
