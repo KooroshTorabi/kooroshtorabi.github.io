@@ -6,6 +6,7 @@ import Button from "@ui/Button";
 import LanguageSwitcher from "@ui/LanguageSwitcher";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import dynamic from "next/dynamic";
 import { Bokor, Pixelify_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,13 +23,25 @@ const PixlifyFont = Pixelify_Sans({
   weight: ["400"],
   variable: "--font-pixlify",
 });
+const TextCrawlCanvas = dynamic<{ children: React.ReactNode }>(
+  () => import("../components/ui/TextCrawl"),
+  {
+    ssr: false, // 👈 این خط حیاتی است!
+    loading: () => (
+      <div className="h-96 flex items-center justify-center text-white">
+        در حال بارگذاری تیتراژ...
+      </div>
+    ),
+  },
+);
 
 export default function HomePage() {
   const { t, i18n } = useTranslation("common");
   const router = useRouter();
 
   const currentLocale = router.locale;
-
+  const pageDirection =
+    currentLocale === "fa" ? "top-4 left-4" : "top-4 right-4"; // 'fa' (فارسی) راست‌چین است.
   const changeLanguage = (currentLng: string | undefined) => {
     const supportedLocales = ["fa", "en", "de"];
     const currentIndex = supportedLocales.indexOf(currentLng + "");
@@ -43,38 +56,34 @@ export default function HomePage() {
     <div
       className={`min-h-screen flex flex-col bg-stone-900 p-10  ${PixlifyFont.className}`}
     >
-      {/* دکمه‌های تغییر زبان */}
       <div className="space-x-4">
-        <h1 className="text-4xl mb-6">{t("welcome")}</h1>
-        {/* 👈 قرار دادن دراپ‌داون در بالا/کنار صفحه */}
-        <div className="absolute top-4 right-4 w-full max-w-xs flex justify-end">
+        <h4 className="text-4xl mb-6">{t("welcome")}</h4>
+        <div
+          className={`absolute ${pageDirection} w-full max-w-xs flex justify-end`}
+        >
           <LanguageSwitcher />
         </div>
       </div>
       <div className="min-h-screen flex items-center justify-center">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h3 className="text-5xl md:text-6xl font-bold  mb-3">
-            Kourosh Torabijafroudi
-          </h3>
+        <div className="w-full max-w-7xl mx-auto px-6 text-center">
+          <h1 className="text-5xl md:text-6xl font-bold  mb-3">
+            {t("mainHeading")}
+          </h1>
 
-          <p className="font-inter text-xl text-slate-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-            I'm driven by curiosity and a love for problem-solving — I get
-            energized turning ideas into clean, performant software that solves
-            real user needs. I enjoy exploring modern tools like TypeScript and
-            React, crafting thoughtful UX, and shipping projects that make an
-            impact.
-          </p>
+          <div className="relative h-96 w-full mb-12  rounded-lg overflow-hidden">
+            <TextCrawlCanvas>{t("introParagraph")}</TextCrawlCanvas>
+          </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
             <Link href="/resume">
               <Button className="bg-slate-900 hover:bg-slate-800">
-                View Resume
+                {t("resumeButton")}
                 <Image src={ArrowRight} alt={""} className="ml-2 w-4 h-4" />
               </Button>
             </Link>
 
             <Link href="/contact">
-              <Button>Get in Touch</Button>
+              <Button>{t("contactButton")}</Button>
             </Link>
           </div>
 

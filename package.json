@@ -11,6 +11,8 @@
     "kourosh": "echo 'Hello, Kourosh!'"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/postprocessing": "^3.0.4",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/react-router-dom": "^5.3.3",
     "framer-motion": "^12.23.22",
@@ -22,13 +24,16 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-i18next": "^16.3.3",
-    "react-router-dom": "^7.9.3"
+    "react-router-dom": "^7.9.3",
+    "react-three-fiber": "^6.0.13",
+    "three": "^0.181.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.181.0",
     "autoprefixer": "^10.4.22",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.17",

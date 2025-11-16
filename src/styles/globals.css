@@ -36,3 +36,11 @@ html {
   font-family: var(--font-pixelify-regular);
   color: var(--foreground);
 }
+
+h1 {
+  font-family: var(--font-pixelify-regular), Vazirmatn, sans-serif;
+  font-size: 48px;
+}
+h4 {
+  font-size: 18px;
+}

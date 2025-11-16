@@ -1,5 +1,9 @@
 {
   "welcome": "Welcome to my website!",
   "blog": "Blog",
-  "change-language": "فارسی"
+  "change-language": "فارسی",
+  "mainHeading": "Kourosh Torabijafroudi",
+  "introParagraph": "Welcome to a world of innovation, learning, and development!\n\nThis space is dedicated to exploring the latest in software technologies such as Next.js, TypeScript, React, and open-source tools. Staying current with emerging trends and sharing experiences in web development and programming is a continuous celebration here. \nIn the blog section, you will occasionally find posts about personal projects, open-source contributions, and innovative ideas.\n\nTogether, we navigate a path of learning and creating new experiences—from automated testing with Jest to building dynamic user interfaces with React and leveraging modern tools in programming.",
+  "resumeButton": "View Resume",
+  "contactButton": "Get in Touch"
 }

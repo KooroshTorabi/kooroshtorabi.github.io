@@ -1,23 +1,10 @@
 // src/components/LanguageSwitcher.tsx
 
+import languageOptions from "@src/lib/languageOptions";
 import { useTranslation } from "next-i18next";
 import Image from "next/image"; // 👈 مطمئن شوید که این ایمپورت را اضافه کنید
 import { useRouter } from "next/router";
 import { useState } from "react";
-
-// تعریف یک لیست ساده از زبان ها و پرچم ها
-const languageOptions = [
-  // 👈 پرچم سفارشی
-  {
-    code: "fa",
-    name: "فارسی",
-    flag: "/images/sun-lion.svg",
-    type: "image",
-    dir: "rtl",
-  },
-  { code: "en", name: "English", flag: "🇬🇧", type: "emoji", dir: "ltr" },
-  { code: "de", name: "Deutsch", flag: "🇩🇪", type: "emoji", dir: "ltr" },
-];
 
 // 👈 تصحیح نام تابع
 const LanguageSwitcher = () => {
@@ -63,7 +50,7 @@ const LanguageSwitcher = () => {
         aria-haspopup="true"
       >
         {renderFlag(currentLanguage)}
-        {currentLanguage.name}
+        <div className="px-2">{currentLanguage.name}</div>
 
         {/* آیکون فلش کوچک‌تر */}
         <svg
