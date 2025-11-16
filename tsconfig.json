@@ -27,7 +27,7 @@
       "@styles/*": ["./src/styles/*"],
       "@public/*": ["./public/*"],
       "@images/*": ["./public/images/*"],
-      "@posts/*": ["./lib/posts/*"],
+      "@posts/*": ["./src/pages/blog/posts/*"],
       // "@assets/*" : ["./src/assets/*"],
       "@icons/*": ["./src/assets/icons/*"],
       "@ui/*": ["./src/components/ui/*"]
@@ -38,7 +38,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "next-i18next.config.js",
     "next-i18next.config.js"
   ],
   "exclude": ["node_modules"]
