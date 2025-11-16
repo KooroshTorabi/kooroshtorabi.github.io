@@ -121,8 +121,10 @@ export default function TextCrawlCanvas({ children }: TextCrawlCanvasProps) {
     >
       <EffectComposer>
         <Bloom
-          luminanceThreshold={0.1} // آستانه روشنایی (فقط عناصر بسیار روشن درخشان می‌شوند)
-          luminanceSmoothing={0.5}
+          intensity={1.2}
+          luminanceThreshold={0.2}
+          luminanceSmoothing={0.9}
+          mipmapBlur
           height={300}
         />
       </EffectComposer>
