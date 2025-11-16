@@ -29,16 +29,6 @@ export default function HomePage() {
 
   const currentLocale = router.locale;
 
-  const changeLanguage = (currentLng: string | undefined) => {
-    const supportedLocales = ["fa", "en", "de"];
-    const currentIndex = supportedLocales.indexOf(currentLng + "");
-    // انتخاب زبان بعدی در لیست (و بازگشت به اول در صورت رسیدن به آخر)
-    const nextIndex = (currentIndex + 1) % supportedLocales.length;
-    const nextLng = supportedLocales[nextIndex];
-
-    router.push(router.asPath, router.asPath, { locale: nextLng });
-  };
-
   return (
     <div
       className={`min-h-screen flex flex-col bg-stone-900 p-10  ${PixlifyFont.className}`}
@@ -108,9 +98,9 @@ export default function HomePage() {
   );
 }
 
-// 👈 تابع getServerSideProps: ضروری برای Pages Router
+// 👈 تابع getStaticProps: ضروری برای Pages Router
 // این تابع در سرور اجرا می شود و فایل ترجمه مورد نیاز برای زبان فعلی را لود می کند.
-export async function getServerSideProps({ locale }: { locale: string }) {
+export async function getStaticProps({ locale }: { locale: string }) {
   // لود کردن فایل common.json برای زبان فعلی (locale)
   return {
     props: {
