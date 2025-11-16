@@ -108,9 +108,7 @@ export default function HomePage() {
   );
 }
 
-// 👈 تابع getServerSideProps: ضروری برای Pages Router
-// این تابع در سرور اجرا می شود و فایل ترجمه مورد نیاز برای زبان فعلی را لود می کند.
-export async function getServerSideProps({ locale }: { locale: string }) {
+export async function getStaticProps({ locale }: { locale: string }) {
   // لود کردن فایل common.json برای زبان فعلی (locale)
   return {
     props: {
