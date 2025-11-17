@@ -4,6 +4,7 @@ import ArrowRight from "@icons/arrow-right.svg";
 // import Mail from "@/assets/icons/mail.svg";
 import Button from "@ui/Button";
 import LanguageSwitcher from "@ui/LanguageSwitcher";
+import { textWithLineBreaks } from "@utils/textWithLineBreaks";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
@@ -11,7 +12,6 @@ import { Bokor, Pixelify_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { textWithLineBreaks } from "@utils/textWithLineBreaks";
 
 const BokorFont = Bokor({
   subsets: ["latin"],
@@ -66,7 +66,7 @@ export default function HomePage() {
       </div>
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-full max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold  mb-3">
+          <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-3">
             {t("mainHeading")}
           </h1>
           {/* Mobile version (simple div text) */}
