@@ -30,7 +30,8 @@
       "@posts/*": ["./src/pages/blog/posts/*"],
       // "@assets/*" : ["./src/assets/*"],
       "@icons/*": ["./src/assets/icons/*"],
-      "@ui/*": ["./src/components/ui/*"]
+      "@ui/*": ["./src/components/ui/*"],
+      "@utils/*": ["./src/utils/*"]
     }
   },
   "include": [

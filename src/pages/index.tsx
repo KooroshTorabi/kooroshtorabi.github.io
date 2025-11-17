@@ -11,6 +11,7 @@ import { Bokor, Pixelify_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { textWithLineBreaks } from "@utils/textWithLineBreaks";
 
 const BokorFont = Bokor({
   subsets: ["latin"],
@@ -68,18 +69,17 @@ export default function HomePage() {
           <h1 className="text-5xl md:text-6xl font-bold  mb-3">
             {t("mainHeading")}
           </h1>
+          {/* Mobile version (simple div text) */}
+          <div className="relative w-full mb-12 rounded-lg bg-stone-800 text-white p-4 block md:hidden">
+            {textWithLineBreaks(t("introParagraph"))}
+            {/* متن مخصوص موبایل */}
+          </div>
 
           {/* Desktop version (show TextCrawlCanvas) */}
-
-          <div className="relative h-96 w-full mb-12 overflow-hidden">
+          <div className="relative h-96 w-full mb-12 overflow-hidden hidden md:block">
             <div className="absolute inset-0 pointer-events-none">
               <TextCrawlCanvas>{t("introParagraph")}</TextCrawlCanvas>
             </div>
-          </div>
-
-          {/* Mobile version (simple div text) */}
-          <div className="relative h-48 w-full mb-12 rounded-lg overflow-hidden bg-stone-800 text-white p-4 block md:hidden">
-            {t("introParagraph")}
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
