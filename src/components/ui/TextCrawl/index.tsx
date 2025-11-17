@@ -2,7 +2,6 @@ import { Text } from "@react-three/drei";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "react-three-fiber";
-// import type * as THREE from "three";
 import * as THREE from "three";
 
 // ----------------------------------------------------------------------
@@ -14,74 +13,56 @@ type TextMeshProps = {
 };
 
 function TextMesh({ text }: TextMeshProps) {
-  // 1. تعریف رفرنس (ref) برای اتصال به کامپوننت <Text>
   const meshRef = useRef<THREE.Mesh>(null!);
-  // 1. رفرنس دوربین را برای حرکت آن لازم داریم
-
   const { camera } = useThree();
-  // تنظیم اولیه موقعیت دوربین
-
-  // 💡 رفرنس برای کنترل نورافکن
   const spotlightRef = useRef<THREE.SpotLight>(null!);
-  // ⚠️ رفرنس برای هدف نور (برای دنبال کردن مرکز)
   const targetRef = useRef<THREE.Object3D>(null!);
 
-  camera.position.y = -300;
-  // 2. انیمیشن حرکت دوربین به عقب
+  camera.position.y =-250;
+
   useFrame((state, delta) => {
-    const speed = 25;
+    const speed = 20;
 
     if (spotlightRef.current) {
       spotlightRef.current.position.copy(camera.position);
-      // اگر دوربین به سمت پایین نگاه می‌کند، هدف نور باید کمی پایین‌تر از مرکز باشد
-      // هدف نور را ثابت نگه دارید تا به سمت متن نگاه کند
     }
 
-    // 🟢 اصلاح حرکت Y: افزایش سرعت حرکت Y برای حفظ زاویه
-    camera.position.y -= speed * delta; // 0.5 یک مقدار تقریبی است
+    camera.position.y -= speed * delta;
 
-    // // 3. ریست دوربین (برای لوپ شدن)
     if (camera.position.y < -1050) {
-      // بازگشت به موقعیت شروع: Y=400, Z=400
-      // camera.position.z = 400;
       camera.position.y = -300;
     }
   });
-  // 3. رندر کامپوننت <Text> از Drei
+
   return (
     <>
-      {/* 🟢 نورافکن (Projector Light) */}
       <spotLight
         ref={spotlightRef}
-        intensity={2000} // شدت بالا خوب است
+        intensity={2000}
         color="#FFFFFF"
         distance={1500}
-        angle={Math.PI / 32} // زاویه بسیار باریک
-        penumbra={0.1} // لبه‌های تیز
+        angle={Math.PI / 32}
+        penumbra={0.1}
         decay={1}
-        // 🟢 سایه‌ها را فعال کنید (بسیار مهم!)
-        castShadow // 👈 این خط را اضافه کنید
-        shadow-mapSize-width={1024} // کیفیت سایه
+        castShadow
+        shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
-        shadow-bias={-0.0001} // برای جلوگیری از artifacts در سایه‌ها
+        shadow-bias={-0.0001}
       >
         <object3D ref={targetRef} position={[0, 0, 0]} attach="target" />
       </spotLight>
       <Text
-        ref={meshRef} // اتصال رفرنس برای دسترسی در useFrame
-        // تنظیم پرسپکتیو: چرخش 60 درجه در محور X
+        ref={meshRef}
         rotation={[0, 0, 0]}
-        //       // تنظیم محل شروع (زیر دوربین)
         position={[0, -500, 0]}
-        // تنظیمات مورد نیاز برای متن سه بعدی
-        font={"fonts/PixelifySans/static/PixelifySans-Regular.ttf"} // ⚠️ فایل فونت TTF باید در public/fonts باشد
+        font={"fonts/PixelifySans/static/PixelifySans-Regular.ttf"}
         fontSize={14}
-        lineHeight={1.5} // فاصله خطوط
-        color="#FFD700" // رنگ زرد Star Wars
+        lineHeight={1.5}
+        color="#FFD700"
         anchorX="center"
         anchorY="middle"
         textAlign="center"
-        maxWidth={250} // برای شکستن خطوط طولانی
+        maxWidth={250}
         material-metalness={0.1}
         material-roughness={0.9}
       >
@@ -91,43 +72,13 @@ function TextMesh({ text }: TextMeshProps) {
   );
 }
 
-function Stars({ count = 300 }) {
-  const pointsRef = useRef<THREE.Points>(null!);
-
-  const positions = useMemo(() => {
-    const arr = [];
-    for (let i = 0; i < count; i++) {
-      const x = (Math.random() - 0.5) * 2000;
-      const y = (Math.random() - 0.5) * 2000;
-      const z = -Math.random() * 2000;
-      arr.push(x, y, z);
-    }
-    return new Float32Array(arr);
-  }, [count]);
-
-  useFrame(() => {
-    if (!pointsRef.current) return;
-    pointsRef.current.rotation.y += 0.0005;
-  });
-
-  return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={positions.length / 3}
-          array={positions}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial color="#ffffff" size={1} sizeAttenuation />
-    </points>
-  );
-}
+// ----------------------------------------------------------------------
+// کامپوننت StarLayer
+// ----------------------------------------------------------------------
 
 type StarLayerProps = {
   count: number;
-  textHeight: number; // ارتفاع تقریبی متن
+  textHeight: number;
   zMin: number;
   zMax: number;
   sizeMin: number;
@@ -162,7 +113,7 @@ export function StarLayer({
 
     for (let i = 0; i < count; i++) {
       const x = (Math.random() - 0.5) * 2000;
-      const y = (Math.random() - 0.5) * textHeight; // ستاره‌ها کل متن را می‌پوشانند
+      const y = (Math.random() - 0.5) * textHeight;
       const z = -(Math.random() * (zMax - zMin) + zMin);
       const size = Math.random() * (sizeMax - sizeMin) + sizeMin;
       const hue = Math.random() * 60;
@@ -175,9 +126,32 @@ export function StarLayer({
     return arr;
   }, [count, textHeight, zMin, zMax, sizeMin, sizeMax]);
 
-  useFrame(() => {
+  const fadeMargin = 200;
+  const height = textHeight;
+
+  useFrame((state, delta) => {
     if (!groupRef.current) return;
-    groupRef.current.position.y += speed;
+
+    groupRef.current.position.y += speed * delta * 100; // scale delta to match original speed
+
+    // لوپ
+    if (groupRef.current.position.y > height / 2) {
+      groupRef.current.position.y = -height / 2;
+    }
+
+    // fade-in و fade-out
+    const y = groupRef.current.position.y + height / 2;
+    let alpha = 1;
+    if (y < fadeMargin-200)
+      alpha = y / fadeMargin; // شروع fade-in
+    else if (y > height - fadeMargin) alpha = (height - y) / fadeMargin; // پایان fade-out
+
+    groupRef.current.traverse((child: any) => {
+      if (child.material) {
+        child.material.transparent = true;
+        child.material.opacity = THREE.MathUtils.clamp(alpha, 0, 1);
+      }
+    });
   });
 
   return (
@@ -191,8 +165,9 @@ export function StarLayer({
     </group>
   );
 }
+
 // ----------------------------------------------------------------------
-// کامپوننت Canvas اصلی
+// Canvas اصلی
 // ----------------------------------------------------------------------
 
 type TextCrawlCanvasProps = {
@@ -200,14 +175,14 @@ type TextCrawlCanvasProps = {
 };
 
 export default function TextCrawlCanvas({ children }: TextCrawlCanvasProps) {
-  // تبدیل children به یک رشته متنی
   const textContent =
     typeof children?.toString() === "string" ? children.toString() : "";
   if (!textContent) return null;
+
+  const textHeight = 1700;
+
   return (
     <Canvas
-      // 🟢 اصلاح Y دوربین: موقعیت شروع را بسیار بالاتر می‌بریم تا Y=0 متن، پایین فریم باشد.
-      // Z=400 را برای عمق و FOV 45 را برای پرسپکتیو حفظ می‌کنیم.
       resize={{ scroll: false, offsetSize: false }}
       camera={{ fov: 45, position: [0, -110, 100] }}
       shadows
@@ -230,37 +205,34 @@ export default function TextCrawlCanvas({ children }: TextCrawlCanvasProps) {
         />
       </EffectComposer>
       <ambientLight intensity={0.01} />
-      {/* نزدیک */}
+
+      {/* سه لایه ستاره با اندازه و سرعت متفاوت */}
       <StarLayer
         count={700}
-        textHeight={1700}
+        textHeight={textHeight}
         zMin={0}
-        zMax={200} // افزایش عمق
+        zMax={200}
         sizeMin={3.2}
         sizeMax={4.8}
-        speed={0.0005}
+        speed={0.5}
       />
-
-      {/* متوسط */}
       <StarLayer
         count={500}
-        textHeight={1700}
+        textHeight={textHeight}
         zMin={1200}
-        zMax={2400} // افزایش عمق
+        zMax={2400}
         sizeMin={0.8}
         sizeMax={1.2}
-        speed={0.0003}
+        speed={0.3}
       />
-
-      {/* دور */}
       <StarLayer
         count={600}
-        textHeight={1700}
+        textHeight={textHeight}
         zMin={2400}
-        zMax={3600} // افزایش عمق
+        zMax={3600}
         sizeMin={0.3}
         sizeMax={0.7}
-        speed={0.0001}
+        speed={0.1}
       />
 
       <TextMesh text={textContent} />
