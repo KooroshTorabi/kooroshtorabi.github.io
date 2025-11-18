@@ -20,4 +20,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   return <Component {...pageProps} />;
 }
 
-export default appWithTranslation(MyApp, nextI18nextConfig);
+export default appWithTranslation(MyApp);

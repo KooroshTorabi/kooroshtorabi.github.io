@@ -1,4 +1,3 @@
-import ArrowRight from "@icons/arrow-right.svg";
 // import Github from "@/assets/icons/github.svg";
 // import Linkedin from "@/assets/icons/linkedin.svg";
 // import Mail from "@/assets/icons/mail.svg";
@@ -8,15 +7,14 @@ import { textWithLineBreaks } from "@utils/textWithLineBreaks";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
-import { Bokor, Pixelify_Sans } from "next/font/google";
-import Image from "next/image";
+import { Pixelify_Sans, Vazirmatn } from "next/font/google";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const BokorFont = Bokor({
+const VazirmatnFont = Vazirmatn({
   subsets: ["latin"],
   weight: ["400"],
-  variable: "--font-bokor",
+  variable: "--font-vazirmatn",
 });
 
 const PixlifyFont = Pixelify_Sans({
@@ -24,7 +22,7 @@ const PixlifyFont = Pixelify_Sans({
   weight: ["400"],
   variable: "--font-pixlify",
 });
-const TextCrawlCanvas = dynamic<{ children: React.ReactNode }>(
+const TextCrawlCanvas = dynamic<{ children: React.ReactNode; locale?: string }>(
   () => import("../components/ui/TextCrawl"),
   {
     ssr: false,
@@ -37,7 +35,7 @@ const TextCrawlCanvas = dynamic<{ children: React.ReactNode }>(
 );
 
 export default function HomePage() {
-  const { t, i18n } = useTranslation("common");
+  const { t } = useTranslation("common");
   const router = useRouter();
 
   const currentLocale = router.locale;
@@ -54,10 +52,10 @@ export default function HomePage() {
 
   return (
     <div
-      className={`min-h-screen flex flex-col bg-stone-900 p-10  ${PixlifyFont.className}`}
+      className={`min-h-screen flex flex-col text-amber-600 bg-stone-900 p-10  ${currentLocale === "fa" ? VazirmatnFont.className : PixlifyFont.className}`}
     >
       <div className="space-x-4">
-        <h4 className="text-4xl mb-6">{t("welcome")}</h4>
+        <h4 className="text-1xl mb-6">{t("welcome")}</h4>
         <div
           className={`absolute ${pageDirection} w-full max-w-xs flex justify-end`}
         >
@@ -65,7 +63,9 @@ export default function HomePage() {
         </div>
       </div>
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-full max-w-7xl mx-auto px-6 text-center">
+        <div
+          className={`w-full max-w-7xl mx-auto px-6 text-center ${currentLocale === "fa" ? VazirmatnFont.className : PixlifyFont.className}`}
+        >
           <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-3">
             {t("mainHeading")}
           </h1>
@@ -78,7 +78,9 @@ export default function HomePage() {
           {/* Desktop version (show TextCrawlCanvas) */}
           <div className="relative h-96 w-full mb-12 overflow-hidden hidden md:block">
             <div className="absolute inset-0 pointer-events-none">
-              <TextCrawlCanvas>{t("introParagraph")}</TextCrawlCanvas>
+              <TextCrawlCanvas locale={currentLocale}>
+                {t("introParagraph")}
+              </TextCrawlCanvas>
             </div>
           </div>
 
@@ -86,7 +88,11 @@ export default function HomePage() {
             <Link href="/resume">
               <Button className="bg-slate-900 hover:bg-slate-800">
                 {t("resumeButton")}
-                <Image src={ArrowRight} alt={""} className="ml-2 w-4 h-4" />
+              </Button>
+            </Link>
+            <Link href="/blog">
+              <Button className="bg-slate-900 hover:bg-slate-800">
+                {t("blogButton")}
               </Button>
             </Link>
 

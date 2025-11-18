@@ -10,15 +10,16 @@ import * as THREE from "three";
 
 type TextMeshProps = {
   text: string;
+  locale?: string;
 };
 
-function TextMesh({ text }: TextMeshProps) {
+function TextMesh({ text, locale }: TextMeshProps) {
   const meshRef = useRef<THREE.Mesh>(null!);
   const { camera } = useThree();
   const spotlightRef = useRef<THREE.SpotLight>(null!);
   const targetRef = useRef<THREE.Object3D>(null!);
 
-  camera.position.y =-250;
+  camera.position.y = -250;
 
   useFrame((state, delta) => {
     const speed = 20;
@@ -55,8 +56,14 @@ function TextMesh({ text }: TextMeshProps) {
         ref={meshRef}
         rotation={[0, 0, 0]}
         position={[0, -500, 0]}
-        font={"fonts/PixelifySans/static/PixelifySans-Regular.ttf"}
-        fontSize={14}
+        font={
+          locale !== "fa"
+            ? "fonts/PixelifySans/static/PixelifySans-Regular.ttf"
+            : "/fonts/Vazirmatn/static/Vazirmatn-Regular.ttf"
+        }
+        // font={"PixelifySans-Regular.ttf"}
+        // font={PixlifyFont.className.toString()}
+        fontSize={12}
         lineHeight={1.5}
         color="#FFD700"
         anchorX="center"
@@ -66,7 +73,7 @@ function TextMesh({ text }: TextMeshProps) {
         material-metalness={0.1}
         material-roughness={0.9}
       >
-        {text}
+        {locale + text}
       </Text>
     </>
   );
@@ -142,7 +149,7 @@ export function StarLayer({
     // fade-in و fade-out
     const y = groupRef.current.position.y + height / 2;
     let alpha = 1;
-    if (y < fadeMargin-200)
+    if (y < fadeMargin - 200)
       alpha = y / fadeMargin; // شروع fade-in
     else if (y > height - fadeMargin) alpha = (height - y) / fadeMargin; // پایان fade-out
 
@@ -172,9 +179,13 @@ export function StarLayer({
 
 type TextCrawlCanvasProps = {
   children: React.ReactNode;
+  locale?: string;
 };
 
-export default function TextCrawlCanvas({ children }: TextCrawlCanvasProps) {
+export default function TextCrawlCanvas({
+  children,
+  locale,
+}: TextCrawlCanvasProps) {
   const textContent =
     typeof children?.toString() === "string" ? children.toString() : "";
   if (!textContent) return null;
@@ -235,7 +246,7 @@ export default function TextCrawlCanvas({ children }: TextCrawlCanvasProps) {
         speed={0.1}
       />
 
-      <TextMesh text={textContent} />
+      <TextMesh text={textContent} locale={locale} />
     </Canvas>
   );
 }

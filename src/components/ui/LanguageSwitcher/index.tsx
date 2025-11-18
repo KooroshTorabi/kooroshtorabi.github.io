@@ -2,10 +2,22 @@
 
 import languageOptions from "@src/lib/languageOptions";
 import { useTranslation } from "next-i18next";
+import { Pixelify_Sans, Vazirmatn } from "next/font/google";
 import Image from "next/image"; // 👈 مطمئن شوید که این ایمپورت را اضافه کنید
 import { useRouter } from "next/router";
 import { useState } from "react";
 
+const VazirmatnFont = Vazirmatn({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-vazirmatn",
+});
+
+const PixlifyFont = Pixelify_Sans({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-pixlify",
+});
 // 👈 تصحیح نام تابع
 const LanguageSwitcher = () => {
   const router = useRouter();
@@ -50,7 +62,11 @@ const LanguageSwitcher = () => {
         aria-haspopup="true"
       >
         {renderFlag(currentLanguage)}
-        <div className="px-2">{currentLanguage.name}</div>
+        <div
+          className={`px-2 ${currentLocale === "fa" ? VazirmatnFont.className : PixlifyFont.className}`}
+        >
+          {currentLanguage.name}
+        </div>
 
         {/* آیکون فلش کوچک‌تر */}
         <svg
@@ -71,8 +87,7 @@ const LanguageSwitcher = () => {
       {/* منوی دراپ‌داون (تصحیح ساختار و استایل‌ها) */}
       {isOpen && (
         <div
-          // 👈 تصحیح استایل‌ها: w-32، bg-stone-800
-          className="origin-top-right absolute right-0 mt-2 w-32 rounded-md shadow-lg bg-amber-800 ring-1 ring-amber-600 ring-opacity-5 divide-y divide-amber-700 focus:outline-none"
+          className="origin-top-right absolute right-0 mt-1 w-32 rounded-md p-1 shadow-lg bg-amber-800 ring-1 ring-amber-600 ring-opacity-5 divide-y divide-amber-700 focus:outline-none"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="menu-button"
@@ -87,7 +102,7 @@ const LanguageSwitcher = () => {
                   onClick={() => changeLanguage(lang.code)}
                   role="menuitem"
                   // 👈 استایل‌های آیتم منو: text-white، hover:bg-stone-700، عرض کامل
-                  className="flex items-center w-full px-3 py-2 text-sm text-white hover:bg-amber-700"
+                  className={`flex items-center w-full px-2 py-1 text-xs text-amber-500 hover:bg-amber-700 ${lang.code === "fa" ? VazirmatnFont.className : PixlifyFont.className}`}
                 >
                   {renderFlag(lang)}
                   {lang.name}
