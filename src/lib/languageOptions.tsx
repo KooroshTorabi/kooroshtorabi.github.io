@@ -1,6 +1,6 @@
 // src/pages/languageOptions.tsx
 
-interface LanguageOption {
+export interface LanguageOption {
   code: string;
   dir: "ltr" | "rtl";
   name: string;

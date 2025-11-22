@@ -121,7 +121,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
   // لود کردن فایل common.json برای زبان فعلی (locale)
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["common"])),
+      ...(await serverSideTranslations(locale || "en", ["common"])),
     },
   };
 }

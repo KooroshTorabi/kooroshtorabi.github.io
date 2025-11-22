@@ -3,7 +3,6 @@ import { appWithTranslation } from "next-i18next";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import nextI18nextConfig from "../../next-i18next.config";
 import languageOptions from "../lib/languageOptions";
 
 function MyApp({ Component, pageProps }: AppProps) {
