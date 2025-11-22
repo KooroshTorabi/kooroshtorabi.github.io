@@ -1,114 +1,58 @@
-// lib/posts.ts
+// src/lib/posts.tsx
 
 import fs from "fs";
 import matter from "gray-matter";
 import path from "path";
 
-const postsDirectory = path.join(process.cwd(), "./src/pages/blog/posts");
-
-/**
- * تبدیل عنوان به slug
- */
-function slugify(title: string): string {
-  return title
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/--+/g, "-");
+export interface PostData {
+  slug: string;
+  title: string;
+  date: string;
+  lang: string;
+  content: string;
 }
 
-/**
- * خواندن همه پست‌ها از فولدرهای زبان
- */
-export function getAllPosts() {
-  if (!fs.existsSync(postsDirectory)) return [];
+const postsDirectory = path.join(process.cwd(), "src", "posts");
 
-  // لیست فولدرهای زبان
-  const languages = fs
+// همه پست‌ها را بخوان
+export function getAllPosts(): PostData[] {
+  const fileNames = fs
     .readdirSync(postsDirectory)
-    .filter((dir) => fs.statSync(path.join(postsDirectory, dir)).isDirectory());
+    .filter((f) => f.endsWith(".md"));
 
-  const posts: Array<{
-    filename: string;
-    slug: string;
-    title: string;
-    date: string;
-    lang: string;
-  }> = [];
+  // console.log("\\\\\\\\\\\\\\\\\\\\\===========>>>>>\n\r"+postsDirectory);
+  const posts = fileNames.map((fileName) => {
+    const filePath = path.join(postsDirectory, fileName);
+    const fileContents = fs.readFileSync(filePath, "utf8");
 
-  languages.forEach((lang) => {
-    const langDir = path.join(postsDirectory, lang);
+    const { data, content } = matter(fileContents);
 
-    if (!fs.existsSync(langDir)) return;
-
-    const files = fs.readdirSync(langDir).filter(
-      (f) => f.endsWith(".md") && fs.statSync(path.join(langDir, f)).isFile(), // فقط فایل‌ها
-    );
-
-    files.forEach((filename) => {
-      try {
-        const fullPath = path.join(langDir, filename);
-        const fileContents = fs.readFileSync(fullPath, "utf8");
-        const { data } = matter(fileContents);
-
-        // فقط پست‌هایی که title و date دارند
-        if (!data.title || !data.date) return;
-
-        posts.push({
-          filename,
-          slug: slugify(data.title),
-          title: data.title,
-          date: data.date,
-          lang,
-        });
-      } catch (err) {
-        console.warn(`Error reading post: ${filename} in lang=${lang}`, err);
-      }
-    });
+    return {
+      slug: fileName.replace(/\.md$/, ""),
+      title: data.title as string,
+      date: data.date as string,
+      lang: data.lang as string,
+      content: content,
+    };
   });
 
-  return posts;
+  // مرتب‌سازی بر اساس تاریخ (جدیدترین اول)
+  return posts.sort((a, b) => (a.date < b.date ? 1 : -1));
 }
 
-/**
- * خواندن یک پست بر اساس slug و lang
- */
-export function getPostBySlug(lang: string, slug: string) {
-  const langDir = path.join(postsDirectory, lang);
+// یک پست را بر اساس slug پیدا کن
+export function getPostBySlug(slug: string): PostData | null {
+  const filePath = path.join(postsDirectory, `${slug}.md`);
+  console.log(`Checking file path: ${filePath}`); // 👈 اضافه کردن این خط
+  if (!fs.existsSync(filePath)) return null;
+  const fileContents = fs.readFileSync(filePath, "utf8");
+  const { data, content } = matter(fileContents);
 
-  if (!fs.existsSync(langDir)) {
-    console.warn(`Language folder not found: ${langDir}`);
-    return null;
-  }
-
-  const files = fs
-    .readdirSync(langDir)
-    .filter(
-      (f) => f.endsWith(".md") && fs.statSync(path.join(langDir, f)).isFile(),
-    );
-
-  for (const file of files) {
-    try {
-      const fullPath = path.join(langDir, file);
-      const fileContents = fs.readFileSync(fullPath, "utf8");
-      const { data, content } = matter(fileContents);
-
-      if (!data.title) continue;
-
-      if (slugify(data.title) === slug) {
-        return {
-          slug,
-          title: data.title,
-          date: data.date,
-          content,
-          lang,
-        };
-      }
-    } catch (err) {
-      console.warn(`Error reading file ${file} in lang=${lang}`, err);
-    }
-  }
-
-  return null; // اگر پیدا نشد
+  return {
+    slug,
+    title: data.title as string,
+    date: data.date as string,
+    lang: data.lang as string,
+    content,
+  };
 }

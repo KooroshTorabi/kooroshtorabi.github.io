@@ -6,5 +6,9 @@
   "mainHeading": "Kourosh Torabijafroudi",
   "introParagraph": " Willkommen in einer Welt voller Innovation, Lernen und Entwicklung!\n\nDieser Ort ist der Erforschung neuester Softwaretechnologien wie Next.js, TypeScript, React und Open-Source-Tools gewidmet. Hier wird ständiges Lernen aktueller Trends und der Austausch von Erfahrungen in der Webentwicklung und Programmierung großgeschrieben. \nIm Blogbereich findest du gelegentlich Beiträge über persönliche Projekte, Open-Source-Beiträge und innovative Ideen.\n\nGemeinsam gehen wir den Weg des Lernens und Schaffens neuer Erfahrungen – von automatisiertem Testen mit Jest bis hin zum Bauen dynamischer Benutzeroberflächen mit React und dem Einsatz moderner Tools in der Programmierung.",
   "resumeButton": "Lebenslauf ansehen",
-  "contactButton": "In Kontakt treten"
+  "contactButton": "In Kontakt treten",
+  "readMore": "Weiterlesen",
+  "allPosts": "Alle Beiträge",
+  "backToBlog": "Zurück zum Blog",
+  "mainPage": "Hauptseite"
 }

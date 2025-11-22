@@ -27,7 +27,7 @@
       "@styles/*": ["./src/styles/*"],
       "@public/*": ["./public/*"],
       "@images/*": ["./public/images/*"],
-      "@posts/*": ["./src/pages/blog/posts/*"],
+      "@posts/*": ["./src/pages/posts/*"],
       // "@assets/*" : ["./src/assets/*"],
       "@icons/*": ["./src/assets/icons/*"],
       "@ui/*": ["./src/components/ui/*"],
