@@ -93,7 +93,7 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
       <Header currentLang={locale} />
 
       <h1 className="text-4xl font-bold mb-6 text-center text-amber-400 pixelify-sans-regular">
-        {tBlog("all_posts_title", "All Posts")}
+        {tBlog("allPosts", "All Posts")}
       </h1>
 
       <div className="flex justify-center mb-10">

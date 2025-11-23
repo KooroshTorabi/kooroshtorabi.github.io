@@ -1,0 +1,77 @@
+{
+  "title": "درباره من",
+  "contact": {
+    "name": "کوروش ترابی جعفرودی",
+    "address": "وین، ۱۰۲۰",
+    "phone": " ",
+    "email": "kooroshtorabi@gmail.com"
+  },
+  "section_about_title": "خلاصه‌ی حرفه‌ای",
+  "section_about_p1": "من یک توسعه‌دهنده فول استک با تجربه‌ی قوی...",
+  "section_about_p2": "فردی سریع در یادگیری با تجربه‌ی عملی در ادغام نرم‌افزار...",
+  "section_skills_title": "دانش و مهارت‌ها",
+  "section_skills": [
+    {
+      "category": "Frontend",
+      "tools": [
+        "Next.js",
+        "React",
+        "Vue.js",
+        "TypeScript",
+        "TailwindCSS",
+        "Chakra",
+        "Responsive Design"
+      ]
+    },
+    {
+      "category": "Backend & APIs",
+      "tools": [
+        "Node.js",
+        "Express.js",
+        "Nest.js",
+        "REST API design",
+        "Authentication / Authorization"
+      ]
+    },
+    {
+      "category": "Databases",
+      "tools": ["MySQL", "PostgreSQL", "SQL querying & optimization"]
+    },
+    {
+      "category": "DevOps & Tools",
+      "tools": ["Git/GitHub", "Docker", "VPS", "Nginx", "PM2", "Linux"]
+    },
+    {
+      "category": "Programming Languages",
+      "tools": ["Java", "C#", "JavaScript", "Python", "PHP"]
+    }
+  ],
+  "section_experience_title": "تجربه‌ی حرفه‌ای",
+  "experience": [
+    {
+      "title": "توسعه‌دهنده نرم‌افزار",
+      "company": "گروه کسب‌وکار وندا، تهران، ایران",
+      "duration": "مارچ ۲۰۱۷ – می ۲۰۲۵ (۸ سال و ۲ ماه)",
+      "description": "طراحی و توسعه‌ی پلتفرم‌های وب و درگاه پرداخت..."
+    },
+    {
+      "title": "توسعه‌دهنده نرم‌افزار",
+      "company": "رایان اقتصاد نوین، تهران، ایران",
+      "duration": "سپتامبر ۲۰۱۲ – مارچ ۲۰۱۷ (۴ سال و ۶ ماه)",
+      "description": "توسعه و بهبود ماژول‌های اصلی بانکی..."
+    }
+  ],
+  "section_education_title": "تحصیلات",
+  "education": [
+    "کارشناسی مهندسی فناوری نرم‌افزار، دانشگاه جامع علمی کاربردی...",
+    "دانشجوی آمار و تحلیل داده، دانشگاه وین، اتریش"
+  ],
+  "languages": "انگلیسی (مسلط)، آلمانی (ارتباط ابتدایی)، فارسی (زبان مادری)",
+  "gdpr_consent": "من با ذخیره‌سازی و پردازش داده‌های شخصی خود مطابق با DSGVO به منظور فرآیند درخواست شغلی موافقت می‌کنم.",
+  "section_contact_title": "با من در ارتباط باشید",
+  "social": {
+    "github_url": "https://github.com/KooroshTorabi",
+    "linkedin_url": "https://linkedin.com/in/Kourosht",
+    "email": "kooroshtorabi@gmail.com"
+  }
+}

@@ -87,25 +87,17 @@ export default function HomePage() {
             <NeonButton
               href={`/blog`}
               locale={currentLocale}
-              className="px-6 py-3 rounded-lg bg-stone-700 text-amber-300 font-semibold hover:bg-amber-500 hover:text-black transition"
-            >
-              {t("resumeButton")}
-            </NeonButton>
-
-            <NeonButton
-              href={`/blog`}
-              locale={currentLocale}
               className="mx-8 px-6 py-3 rounded-lg bg-stone-700 text-amber-300 font-semibold hover:bg-amber-500 hover:text-black transition"
             >
               {t("blogButton")}
             </NeonButton>
 
             <NeonButton
-              href={`/blog`}
+              href={`/about`}
               locale={currentLocale}
               className="px-6 py-3 rounded-lg bg-stone-700 text-amber-300 font-semibold hover:bg-amber-500 hover:text-black transition"
             >
-              {t("contactButton")}
+              {t("aboutButton")}
             </NeonButton>
           </div>
 

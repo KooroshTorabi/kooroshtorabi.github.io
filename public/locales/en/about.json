@@ -1,0 +1,63 @@
+{
+  "title": "About Me",
+  "contact": {
+    "name": "Kourosh Torabijafroudi",
+    "address": "Wien, 1020",
+    "phone": "YOUR_PHONE_NUMBER_HERE", 
+    "email": "YOUR_EMAIL_HERE" 
+  },
+  "section_about_title": "Professional Summary",
+  "section_about_p1": "Full Stack Developer with strong experience in building modern, user-focused web applications using Next.js, React, Java, C#, and SQL databases. Highly skilled in developing reliable backend systems and scalable frontends with a focus on clean architecture and performance.",
+  "section_about_p2": "A fast learner with hands-on experience integrating software into real business workflows. Highly motivated to contribute to solutions that improve patient onboarding, insurance processing, and digital healthcare services.",
+  "section_skills_title": "Knowledge and Skills",
+ "section_skills": [
+    {
+      "category": "Frontend",
+      "tools": ["Next.js", "React", "Vue.js", "TypeScript", "TailwindCSS", "Chakra", "Responsive Design"]
+    },
+    {
+      "category": "Backend & APIs",
+      "tools": ["Node.js", "Express.js", "Nest.js", "REST API design", "Authentication / Authorization"]
+    },
+    {
+      "category": "Databases",
+      "tools": ["MySQL", "PostgreSQL", "SQL querying & optimization"]
+    },
+    {
+      "category": "DevOps & Tools",
+      "tools": ["Git/GitHub", "Docker", "VPS", "Nginx", "PM2", "Linux"]
+    },
+    {
+      "category": "Programming Languages",
+      "tools": ["Java", "C#", "JavaScript", "Python", "PHP"]
+    }
+  ],
+  "section_experience_title": "Professional Experience",
+  "experience": [
+    {
+      "title": "Software Developer",
+      "company": "Vanda Business Group, Tehran, Iran",
+      "duration": "March 2017 – May 2025 (8 yrs 2 mo)",
+      "description": "Designed and developed a payment gateway and web platforms using Next.js, PHP (Yii), and Django REST API. Built and optimized backend/frontend systems (speed, security, UI/UX). Managed server infrastructure (VPS, Nginx, Docker, PM2) and applied Agile/CI/CD workflows."
+    },
+    {
+      "title": "Software Developer",
+      "company": "Rayan Eghtesad Novin, Tehran, Iran",
+      "duration": "September 2012 – March 2017 (4 years 6 months)",
+      "description": "Developed and enhanced core banking modules (reporting, remittance, trade finance systems). Improved reporting performance using C#, Java, SSRS, and ETL pipelines. Optimized SQL queries, reducing data processing time and increasing system reliability."
+    }
+  ],
+  "section_education_title": "Education",
+  "education": [
+    "Bachelor of Science in Computer Software Technology Engineering, University of Applied Science and Technology (UAST), Iran",
+    "Statistics and Data Analytics Student, University of Vienna, Austria"
+  ],
+  "languages": "English (Proficient), German (Basic communication), Persian (Native)",
+  "gdpr_consent": "I agree to the storage and processing of my personal data in accordance with the GDPR for the purpose of the application procedure.",
+  "section_contact_title": "Connect with Me",
+  "social": {
+    "github_url": "https://github.com/KooroshTorabi",
+    "linkedin_url": "https://linkedin.com/in/Kourosht",
+    "email": "YOUR_EMAIL_HERE" 
+  }
+}
