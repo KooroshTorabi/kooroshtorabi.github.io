@@ -12,19 +12,22 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 
-// --- Type Definitions (بدون تغییر) ---
+const DEFAULT_COVER_IMAGE = "/images/default-blog-cover.jpg"; 
+
+// --- Type Definitions ---
 interface Post {
   slug: string;
   title: string;
   date: string;
-  lang: string; // زبان داخلی پست
+  lang: string; 
+  coverImage?: string| null; // ✅ اختیاری
 }
 
 interface BlogProps {
   posts: Post[];
 }
 
-// --- GetStaticProps (SSG - استفاده از Locale تزریق شده) ---
+// --- GetStaticProps (بدون تغییر) ---
 export const getStaticProps: GetStaticProps<BlogProps> = async ({ locale }) => {
   const currentLocale = locale || "en";
   const posts = getAllPosts();
@@ -32,8 +35,7 @@ export const getStaticProps: GetStaticProps<BlogProps> = async ({ locale }) => {
   return {
     props: {
       posts,
-      // بارگذاری ترجمه‌ها بر اساس زبان UI صفحه (locale)
-      ...(await serverSideTranslations(currentLocale, ["common", "blog"])),
+      ...(await serverSideTranslations(currentLocale, ["common", "blog"])), 
     },
   };
 };
@@ -41,8 +43,8 @@ export const getStaticProps: GetStaticProps<BlogProps> = async ({ locale }) => {
 // --- کامپوننت صفحه بلاگ ---
 const Blog: NextPage<BlogProps> = ({ posts }) => {
   const { locale } = useRouter();
-  const { i18n } = useTranslation("blog");
-  const { t } = useTranslation("common");
+  const { t: tBlog, i18n } = useTranslation("blog"); 
+  const { t: tCommon } = useTranslation("common"); // استفاده برای کلیدهای عمومی
 
   const [selectedLang, setSelectedLang] = useState<string | null>(null);
 
@@ -59,13 +61,11 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
 
   // 🚩 تابع کمکی برای ترجمه عبارت "Read More" بر اساس زبان محتوای پست
   const getReadMoreText = (contentLang: string) => {
-    // اگر پست به زبان فارسی بود، رشته فارسی را برگردان
     if (contentLang === "fa") {
       return "بیشتر بخوانید";
     }
-    // در غیر این صورت، از ترجمه UI یا پیش‌فرض انگلیسی استفاده کن
-    // اگرچه می‌توانستیم یک کتابخانه کامل بارگذاری کنیم، اما برای یک عبارت ساده این کافی است.
-    return t("readMore", "Read more");
+    // ✅ اصلاح شد: استفاده از کلید "readMore"
+    return tCommon("readMore", "Read more"); 
   };
 
   return (
@@ -76,7 +76,7 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
       <Header currentLang={locale} />
 
       <h1 className="text-4xl font-bold mb-6 text-center text-amber-400 pixelify-sans-regular">
-        {t("allPosts", "All Posts")}
+        {tBlog("all_posts_title", "All Posts")}
       </h1>
 
       <div className="flex justify-center mb-10">
@@ -87,46 +87,65 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
       </div>
 
       <div className="max-w-3xl mx-auto space-y-6">
-        {filteredPosts.map(({ slug, title, date, lang }) => {
+        {filteredPosts.map((post) => {
+          const { slug, title, date, lang, coverImage } = post; 
           const langInfo = languageOptions.find((l) => l.code === lang);
-
           const postDir = langInfo?.dir || "ltr";
-
-          // 🚩 استفاده از تابع کمکی برای گرفتن متن "بیشتر بخوانید"
           const readMoreText = getReadMoreText(lang);
+
+          const imageUrl = coverImage || DEFAULT_COVER_IMAGE;
+          const altText = `Cover image for post: ${title}`;
 
           return (
             <Link
               key={`${lang}-${slug}`}
               href={`/blog/${slug}`}
               locale={locale}
-              className="block bg-stone-800 p-6 rounded-xl shadow-lg hover:bg-stone-700 transition-all"
+              className="block bg-stone-800 p-6 rounded-xl shadow-lg hover:bg-stone-700 transition-all flex items-center space-x-4 rtl:space-x-reverse"
               dir={postDir}
             >
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-xs bg-amber-700 text-black px-2 py-1 rounded flex items-center gap-1">
-                  {langInfo?.type === "image" ? (
-                    <Image
-                      src={langInfo.flag}
-                      alt={langInfo.name}
-                      width={16}
-                      height={16}
-                      className="inline-block"
-                    />
-                  ) : (
-                    <span>{langInfo?.flag}</span>
-                  )}
-                  {langInfo?.name ?? lang}
-                </span>
-
-                <p className="text-sm text-amber-600">{date}</p>
+              
+              {/* 🚩 کانتینر تصویر */}
+              <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 rounded-lg overflow-hidden relative">
+                <Image
+                  src={imageUrl}
+                  alt={altText}
+                  fill 
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  sizes="(max-width: 640px) 100vw, 320px"
+                  priority={false}
+                />
               </div>
 
-              <h2 className="text-2xl font-semibold text-amber-300 pixelify-sans-regular">
-                {title}
-              </h2>
+              {/* 🚩 محتوای متنی */}
+              <div className="flex-grow min-w-0">
+                <div className="flex justify-between items-start mb-2">
+                  <span className="text-xs bg-amber-700 text-black px-2 py-1 rounded flex items-center gap-1">
+                    {langInfo?.type === "image" ? (
+                      <Image
+                        src={langInfo.flag}
+                        alt={langInfo.name}
+                        width={16}
+                        height={16}
+                        className="inline-block"
+                      />
+                    ) : (
+                      <span>{langInfo?.flag}</span>
+                    )}
+                    {langInfo?.name ?? lang}
+                  </span>
 
-              <p className="text-amber-500 mt-3 opacity-80">{readMoreText} →</p>
+                  <p className="text-sm text-amber-600">{date}</p>
+                </div>
+
+                <h2 className="text-xl sm:text-2xl font-semibold text-amber-300 pixelify-sans-regular truncate">
+                  {title}
+                </h2>
+
+                <p className="text-amber-500 mt-3 opacity-80">
+                  {readMoreText} →
+                </p>
+              </div>
             </Link>
           );
         })}

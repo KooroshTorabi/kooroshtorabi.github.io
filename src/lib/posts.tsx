@@ -10,6 +10,7 @@ export interface PostData {
   date: string;
   lang: string;
   content: string;
+  coverImage?: string | null;
 }
 
 const postsDirectory = path.join(process.cwd(), "src", "posts");
@@ -20,7 +21,6 @@ export function getAllPosts(): PostData[] {
     .readdirSync(postsDirectory)
     .filter((f) => f.endsWith(".md"));
 
-  // console.log("\\\\\\\\\\\\\\\\\\\\\===========>>>>>\n\r"+postsDirectory);
   const posts = fileNames.map((fileName) => {
     const filePath = path.join(postsDirectory, fileName);
     const fileContents = fs.readFileSync(filePath, "utf8");
@@ -33,6 +33,7 @@ export function getAllPosts(): PostData[] {
       date: data.date as string,
       lang: data.lang as string,
       content: content,
+      coverImage: data.coverImage ?? null,
     };
   });
 
@@ -54,5 +55,6 @@ export function getPostBySlug(slug: string): PostData | null {
     date: data.date as string,
     lang: data.lang as string,
     content,
+    coverImage: data.coverImage || null,
   };
 }

@@ -106,6 +106,7 @@ export function StarLayer({
 
   const stars = useMemo(() => {
     const arr: {
+      id: string;
       position: [number, number, number];
       size: number;
       color: string;
@@ -127,8 +128,9 @@ export function StarLayer({
       const color = new THREE.Color(`hsl(${hue}, 100%, 80%)`).getStyle();
       const geometry =
         geometries[Math.floor(Math.random() * geometries.length)];
+      const id = THREE.MathUtils.generateUUID();
 
-      arr.push({ position: [x, y, z], size, color, geometry });
+      arr.push({ id, position: [x, y, z], size, color, geometry });
     }
     return arr;
   }, [count, textHeight, zMin, zMax, sizeMin, sizeMax]);
@@ -163,8 +165,8 @@ export function StarLayer({
 
   return (
     <group ref={groupRef}>
-      {stars.map((star, i) => (
-        <mesh key={i} geometry={star.geometry} position={star.position}>
+      {stars.map((star) => (
+        <mesh key={star.id} geometry={star.geometry} position={star.position}>
           <meshBasicMaterial color={star.color} />
           <mesh scale={[star.size, star.size, star.size]} />
         </mesh>
