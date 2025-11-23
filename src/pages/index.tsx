@@ -1,14 +1,13 @@
 // import Github from "@/assets/icons/github.svg";
 // import Linkedin from "@/assets/icons/linkedin.svg";
 // import Mail from "@/assets/icons/mail.svg";
-import Button from "@ui/Button";
+import NeonButton from "@src/components/ui/NeonButton";
 import LanguageSwitcher from "@ui/LanguageSwitcher";
 import { textWithLineBreaks } from "@utils/textWithLineBreaks";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
 import { Pixelify_Sans, Vazirmatn } from "next/font/google";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 const VazirmatnFont = Vazirmatn({
@@ -85,20 +84,29 @@ export default function HomePage() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
-            <Link href="/resume">
-              <Button className="bg-slate-900 hover:bg-slate-800">
-                {t("resumeButton")}
-              </Button>
-            </Link>
-            <Link href="/blog">
-              <Button className="bg-slate-900 hover:bg-slate-800">
-                {t("blogButton")}
-              </Button>
-            </Link>
+            <NeonButton
+              href={`/blog`}
+              locale={currentLocale}
+              className="px-6 py-3 rounded-lg bg-stone-700 text-amber-300 font-semibold hover:bg-amber-500 hover:text-black transition"
+            >
+              {t("resumeButton")}
+            </NeonButton>
 
-            <Link href="/contact">
-              <Button>{t("contactButton")}</Button>
-            </Link>
+            <NeonButton
+              href={`/blog`}
+              locale={currentLocale}
+              className="mx-8 px-6 py-3 rounded-lg bg-stone-700 text-amber-300 font-semibold hover:bg-amber-500 hover:text-black transition"
+            >
+              {t("blogButton")}
+            </NeonButton>
+
+            <NeonButton
+              href={`/blog`}
+              locale={currentLocale}
+              className="px-6 py-3 rounded-lg bg-stone-700 text-amber-300 font-semibold hover:bg-amber-500 hover:text-black transition"
+            >
+              {t("contactButton")}
+            </NeonButton>
           </div>
 
           <div className="flex items-center justify-center gap-6">

@@ -2,14 +2,31 @@
 
 import languageOptions from "@lib/languageOptions";
 import { getAllPosts, getPostBySlug, type PostData } from "@lib/posts";
+import NeonButton from "@src/components/ui/NeonButton";
 import Header from "@ui/Header";
 import { marked } from "marked";
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import dynamic from "next/dynamic";
 import { Pixelify_Sans, Vazirmatn } from "next/font/google";
-import Image from "next/image"; // 🚩 Image component
 import Link from "next/link";
+
+// 🚩 بارگذاری پویا برای جلوگیری از رندر SSR
+const DynamicTileEffect = dynamic(() => import("@ui/TileEffect"), {
+  ssr: false, // ❌ مهم: حتماً SSR را غیرفعال کنید
+  loading: () => (
+    <div className="h-64 sm:h-80 md:h-96 bg-stone-700 animate-pulse" />
+  ),
+});
+
+// 🚩 بارگذاری پویا برای افکت موج جدید
+const DynamicWaveEffect = dynamic(() => import("@ui/WaveEffect"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-64 sm:h-80 md:h-96 bg-stone-700 animate-pulse" />
+  ),
+});
 
 const VazirmatnFont = Vazirmatn({ subsets: ["latin"], weight: ["400"] });
 const PixlifyFont = Pixelify_Sans({ subsets: ["latin"], weight: ["400"] });
@@ -124,7 +141,13 @@ const PostPage: NextPage<PostPageProps> = ({
       {/* 🚩 کانتینر تصویر کاور */}
 
       <div className="max-w-3xl mx-auto rounded-xl overflow-hidden shadow-2xl mt-5">
-        <Image
+        <div className="w-full h-64 sm:h-80 md:h-96">
+          {/* ✅ جایگزینی Image با کامپوننت 3D */}
+          {/* <DynamicTileEffect imageUrl={imageUrl} /> */}
+          <DynamicWaveEffect imageUrl={imageUrl} />
+        </div>
+
+        {/* <Image
           src={imageUrl}
           alt={altText}
           // ابعاد تصویر را تنظیم کنید (مثلاً عرض 800 و ارتفاع 450 برای نسبت 16:9)
@@ -132,41 +155,44 @@ const PostPage: NextPage<PostPageProps> = ({
           height={250} // 👈 کاهش ارتفاع
           className="object-cover w-svw h-64 sm:h-80 md:h-96"
           priority={true}
-        />
+        /> */}
       </div>
-      <article className="max-w-3xl mx-auto bg-stone-800 p-8 rounded-2xl shadow-lg mt-5">
-        <h1 className="text-3xl md:text-4xl font-bold text-amber-400 mb-4">
-          {post.title}
-        </h1>
-        <p className="text-sm text-amber-500 mb-8">
-          {post.date} ({langInfo?.name ?? contentLang})
-        </p>
+      <div className="max-w-3xl mx-auto mt-5">
+        <article className="max-w-3xl mx-auto bg-stone-800 p-8 rounded-2xl shadow-lg mt-5">
+          <h1 className="text-3xl md:text-4xl font-bold text-amber-400 mb-4">
+            {post.title}
+          </h1>
+          <p className="text-sm text-amber-500 mb-8">
+            {post.date} ({langInfo?.name ?? contentLang})
+          </p>
 
-        <div
-          className="prose prose-invert prose-amber max-w-none prose-p:mb-8"
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: محتوای مارک‌داون
-          dangerouslySetInnerHTML={{ __html: contentHtml }}
-        />
+          <div
+            className="prose prose-invert prose-amber max-w-none prose-p:mb-8"
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: محتوای مارک‌داون
+            dangerouslySetInnerHTML={{ __html: contentHtml }}
+          />
 
-        <div className="mt-8 flex gap-4">
-          <Link
-            href={`/blog`}
-            locale={uiLang}
-            className="px-6 py-3 rounded-lg bg-stone-700 text-amber-300 font-semibold hover:bg-amber-500 hover:text-black transition"
-          >
-            {/* 🚩 استفاده از ترجمه تزریق شده زبان محتوا */}←{" "}
-            {contentTKeys.backToBlog}
-          </Link>
-          <Link
-            href={`/`}
-            locale={uiLang}
-            className="px-6 py-3 rounded-lg bg-stone-700  text-amber-300 font-semibold hover:bg-amber-500   hover:text-black transition"
-          >
-            {/* 🚩 استفاده از ترجمه تزریق شده زبان محتوا */}
-            {contentTKeys.mainPage}
-          </Link>
-        </div>
-      </article>
+          <div className="mt-8 flex gap-4">
+            <NeonButton
+              href={`/blog`}
+              locale={uiLang}
+              // کلاس‌های Tailwind برای متن و رنگ‌ها را منتقل کنید
+              className="px-6 py-3 rounded-lg bg-stone-700 text-amber-300 font-semibold hover:bg-amber-500 hover:text-black transition"
+            >
+              ← {contentTKeys.backToBlog}
+            </NeonButton>
+
+            <Link
+              href={`/`}
+              locale={uiLang}
+              className="px-6 py-3 rounded-lg bg-stone-700  text-amber-300 font-semibold hover:bg-amber-500   hover:text-black transition"
+            >
+              {/* 🚩 استفاده از ترجمه تزریق شده زبان محتوا */}
+              {contentTKeys.mainPage}
+            </Link>
+          </div>
+        </article>
+      </div>
     </div>
   );
 };
