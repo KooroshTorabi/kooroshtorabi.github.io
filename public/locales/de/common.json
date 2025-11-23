@@ -1,10 +1,10 @@
 {
   "welcome": "Willkommen auf meiner Website!",
+  "siteTitle": "Kourosh Torabijafroudi - Softwareentwickler-Blog",
   "blog": "Blog",
   "blogButton": "Blog",
-  "change-language": "فارسی",
-  "mainHeading": "Kourosh Torabijafroudi",
-  "introParagraph": " Willkommen in einer Welt voller Innovation, Lernen und Entwicklung!\n\nDieser Ort ist der Erforschung neuester Softwaretechnologien wie Next.js, TypeScript, React und Open-Source-Tools gewidmet. Hier wird ständiges Lernen aktueller Trends und der Austausch von Erfahrungen in der Webentwicklung und Programmierung großgeschrieben. \nIm Blogbereich findest du gelegentlich Beiträge über persönliche Projekte, Open-Source-Beiträge und innovative Ideen.\n\nGemeinsam gehen wir den Weg des Lernens und Schaffens neuer Erfahrungen – von automatisiertem Testen mit Jest bis hin zum Bauen dynamischer Benutzeroberflächen mit React und dem Einsatz moderner Tools in der Programmierung.",
+  "mainHeading": "Journal von Kourosh",
+  "introParagraph": " Hier veröffentliche ich gelegentlich Beiträge, die ich persönlich interessant oder inspirierend finde und gerne mit anderen teilen möchte.\nDie Themen dieser Beiträge sind nicht auf einen Bereich beschränkt; Sie finden hier alles von Softwaretechnologie, Programmierung und modernen Tools bis hin zu Elektronik, persönlichen Projekten, verschiedenen Sprachen und allem, was ich als lohnenswert zum Lernen empfinde.\n\nDieser Raum dient der Sammlung von Erfahrungen, Ideen und Dingen, denen ich auf meinem Lern- und Arbeitsweg begegne – eine vielfältige Sammlung von Wissen, das vielleicht auch für Sie nützlich oder inspirierend sein könnte.",
   "resumeButton": "Lebenslauf ansehen",
   "contactButton": "In Kontakt treten",
   "readMore": "Weiterlesen",

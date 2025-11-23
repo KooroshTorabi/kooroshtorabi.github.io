@@ -73,7 +73,7 @@ function TextMesh({ text, locale }: TextMeshProps) {
         material-metalness={0.1}
         material-roughness={0.9}
       >
-        {locale + text}
+        {text}
       </Text>
     </>
   );

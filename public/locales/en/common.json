@@ -1,14 +1,14 @@
 {
   "welcome": "Welcome to my website!",
+  "siteTitle": "Kourosh Torabijafroudi - Software Developer Blog",
   "blog": "Blog",
   "blogButton": "Blog",
-  "change-language": "فارسی",
-  "mainHeading": "Kourosh Torabijafroudi",
-  "introParagraph": "Welcome to a world of innovation, learning, and development!\n\nThis space is dedicated to exploring the latest in software technologies such as Next.js, TypeScript, React, and open-source tools. Staying current with emerging trends and sharing experiences in web development and programming is a continuous celebration here. \nIn the blog section, you will occasionally find posts about personal projects, open-source contributions, and innovative ideas.\n\nTogether, we navigate a path of learning and creating new experiences—from automated testing with Jest to building dynamic user interfaces with React and leveraging modern tools in programming.",
+  "mainHeading": "Kourosh's Journal",
+  "introParagraph": " Here, I occasionally publish posts that I personally find interesting or inspiring and would like to share with others.\nThe topics of these posts are not limited to a single area; you will find everything from software technology, programming, and modern tools to electronics, personal projects, various languages, and anything I find worthwhile to learn.\n\nThis space serves as a collection of experiences, ideas, and things I encounter on my learning and work journey – a diverse collection of knowledge that may also be useful or inspiring for you.",
   "resumeButton": "View Resume",
   "contactButton": "Get in Touch",
-  "readMore": "Read More", 
+  "readMore": "Read More",
   "allPosts": "All Posts",
-  "backToBlog": "Back to Blog", 
+  "backToBlog": "Back to Blog",
   "mainPage": "Main Page"
 }

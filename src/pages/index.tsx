@@ -55,7 +55,7 @@ export default function HomePage() {
       className={`min-h-screen flex flex-col text-amber-600 bg-stone-900 p-10  ${currentLocale === "fa" ? VazirmatnFont.className : PixlifyFont.className}`}
     >
       <div className="space-x-4">
-        <h4 className="text-1xl mb-6">{t("welcome")}</h4>
+        <h4 className="text-1xl mb-6">{t("siteTitle")}</h4>
         <div
           className={`absolute ${pageDirection} w-full max-w-xs flex justify-end`}
         >

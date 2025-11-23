@@ -40,8 +40,9 @@ export const getStaticProps: GetStaticProps<BlogProps> = async ({ locale }) => {
 
 // --- کامپوننت صفحه بلاگ ---
 const Blog: NextPage<BlogProps> = ({ posts }) => {
-  const { locale } = useRouter(); 
-  const { t, i18n } = useTranslation("blog");
+  const { locale } = useRouter();
+  const { i18n } = useTranslation("blog");
+  const { t } = useTranslation("common");
 
   const [selectedLang, setSelectedLang] = useState<string | null>(null);
 
@@ -54,19 +55,18 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
 
   // جهت‌دهی کلی صفحه (بر اساس زبان UI)
   const currentLangInfo = languageOptions.find((l) => l.code === i18n.language);
-  const pageDir = currentLangInfo?.dir || "ltr"; 
+  const pageDir = currentLangInfo?.dir || "ltr";
 
   // 🚩 تابع کمکی برای ترجمه عبارت "Read More" بر اساس زبان محتوای پست
   const getReadMoreText = (contentLang: string) => {
     // اگر پست به زبان فارسی بود، رشته فارسی را برگردان
-    if (contentLang === 'fa') {
+    if (contentLang === "fa") {
       return "بیشتر بخوانید";
     }
     // در غیر این صورت، از ترجمه UI یا پیش‌فرض انگلیسی استفاده کن
     // اگرچه می‌توانستیم یک کتابخانه کامل بارگذاری کنیم، اما برای یک عبارت ساده این کافی است.
-    return t("read_more", "Read more"); 
-  }
-
+    return t("readMore", "Read more");
+  };
 
   return (
     <div
@@ -76,7 +76,7 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
       <Header currentLang={locale} />
 
       <h1 className="text-4xl font-bold mb-6 text-center text-amber-400 pixelify-sans-regular">
-        {t("all_posts_title", "All Posts")}
+        {t("allPosts", "All Posts")}
       </h1>
 
       <div className="flex justify-center mb-10">
@@ -91,15 +91,15 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
           const langInfo = languageOptions.find((l) => l.code === lang);
 
           const postDir = langInfo?.dir || "ltr";
-          
+
           // 🚩 استفاده از تابع کمکی برای گرفتن متن "بیشتر بخوانید"
           const readMoreText = getReadMoreText(lang);
 
           return (
             <Link
               key={`${lang}-${slug}`}
-              href={`/blog/${slug}`} 
-              locale={locale} 
+              href={`/blog/${slug}`}
+              locale={locale}
               className="block bg-stone-800 p-6 rounded-xl shadow-lg hover:bg-stone-700 transition-all"
               dir={postDir}
             >
@@ -126,9 +126,7 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
                 {title}
               </h2>
 
-              <p className="text-amber-500 mt-3 opacity-80">
-                {readMoreText} → 
-              </p>
+              <p className="text-amber-500 mt-3 opacity-80">{readMoreText} →</p>
             </Link>
           );
         })}
