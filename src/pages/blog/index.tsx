@@ -92,11 +92,11 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
     >
       <Header currentLang={locale} />
 
-      <h1 className="text-4xl font-bold mb-6 text-center text-amber-400 pixelify-sans-regular">
+      <h1 className="text-4xl font-bold mb-3 mt-6 text-center text-amber-400 pixelify-sans-regular">
         {tBlog("allPosts", "All Posts")}
       </h1>
 
-      <div className="flex justify-center mb-10">
+      <div className="flex justify-center mb-6">
         <BlogLanguageSwitcher
           currentLang={selectedLang}
           onChange={(lang) => setSelectedLang(lang)}
@@ -154,7 +154,7 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
 
                     <p className="text-sm text-amber-600">{date}</p>
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-semibold text-amber-300 truncate">
+                  <h2 className="text-xl sm:text-2xl font-semibold text-amber-300 ">
                     {title}
                   </h2>
                   <p className="text-amber-500 mt-3 opacity-80">
