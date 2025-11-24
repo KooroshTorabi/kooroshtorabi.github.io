@@ -37,7 +37,7 @@ interface Post {
   date: string;
   lang: string;
   coverImage?: string | null; 
-  excerpt: string; // 🔑 این فیلد در posts.tsx باید اضافه شده باشد
+  excerpt?: string; // 🔑 این فیلد در posts.tsx باید اضافه شده باشد
 }
 
 interface BlogProps {
