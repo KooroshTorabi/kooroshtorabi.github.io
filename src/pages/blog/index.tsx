@@ -2,7 +2,7 @@
 
 import languageOptions from "@lib/languageOptions";
 // 💡 فرض بر این است که getAllPosts اکنون excerpt را برمی‌گرداند.
-import { getAllPosts } from "@lib/posts"; 
+import { getAllPosts } from "@lib/posts";
 import BlogLanguageSwitcher from "@ui/BlogLanguageSwitcher";
 import Header from "@ui/Header";
 import type { GetStaticProps, NextPage } from "next";
@@ -20,7 +20,7 @@ const DynamicTiltEffect = dynamic(() => import("@ui/TiltEffect"), {
 });
 
 // 🚩 ایمپورت فونت‌ها
-import { Pixelify_Sans, Vazirmatn } from "next/font/google"; 
+import { Pixelify_Sans, Vazirmatn } from "next/font/google";
 
 // 🚩 تعریف فونت‌ها
 const VazirmatnFont = Vazirmatn({
@@ -37,7 +37,7 @@ interface Post {
   title: string;
   date: string;
   lang: string;
-  coverImage?: string | null; 
+  coverImage?: string | null;
   excerpt: string; // 🔑 اضافه شدن خلاصه متن برای نمایش در لیست
 }
 
@@ -49,7 +49,7 @@ interface BlogProps {
 export const getStaticProps: GetStaticProps<BlogProps> = async ({ locale }) => {
   const currentLocale = locale || "en";
   // 🔑 فرض بر این است که getAllPosts اکنون excerpt را هم برمی‌گرداند
-  const posts = await getAllPosts(); 
+  const posts = await getAllPosts();
 
   return {
     props: {
@@ -63,7 +63,7 @@ export const getStaticProps: GetStaticProps<BlogProps> = async ({ locale }) => {
 const Blog: NextPage<BlogProps> = ({ posts }) => {
   const { locale } = useRouter();
   const { t: tBlog, i18n } = useTranslation("blog");
-  const { t: tCommon } = useTranslation("common"); 
+  const { t: tCommon } = useTranslation("common");
 
   const [selectedLang, setSelectedLang] = useState<string | null>(null);
 
@@ -114,7 +114,7 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
           const altText = `Cover image for post: ${title}`;
           const fontClass =
             lang === "fa" ? VazirmatnFont.className : PixlifyFont.className;
-            
+
           return (
             <DynamicTiltEffect key={`${lang}-${slug}`} maxTilt={6}>
               <Link
@@ -124,59 +124,58 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
                 className="block bg-stone-800 p-4 sm:p-6 rounded-xl shadow-lg hover:bg-stone-700 transition-all"
                 dir={postDir}
               >
-                
                 <div className="flex flex-col sm:flex-row gap-4">
-                    
-                    {/* 🚩 ۱. تصویر کاور: تمام عرض در موبایل، w-1/3 در دسکتاپ */}
-                    <div className="w-full sm:w-1/3 flex-shrink-0 rounded-lg overflow-hidden relative h-40 sm:h-auto">
-                      <Image
-                        src={imageUrl}
-                        alt={altText}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        sizes="(max-width: 640px) 100vw, 320px"
-                        priority={false}
-                      />
+                  {/* 🚩 ۱. تصویر کاور: تمام عرض در موبایل، w-1/3 در دسکتاپ */}
+                  <div className="w-full sm:w-1/3 flex-shrink-0 rounded-lg overflow-hidden relative h-40 sm:h-auto">
+                    <Image
+                      src={imageUrl}
+                      alt={altText}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, 320px"
+                      priority={false}
+                    />
+                  </div>
+
+                  {/* 🚩 ۲. محتوای متنی */}
+                  <div className={`sm:w-2/3 flex-grow min-w-0 ${fontClass}`}>
+                    {/* عنوان */}
+                    <h2 className="text-xl sm:text-2xl font-semibold text-amber-300 mb-2">
+                      {title}
+                    </h2>
+
+                    {/* 🔑 زبان و تاریخ در یک خط (با فاصله بینابینی) */}
+                    <div className="flex justify-between items-center mb-3">
+                      <p className="text-sm text-amber-600 order-last sm:order-first">
+                        {date}
+                      </p>
+
+                      <span className="text-xs bg-amber-700 text-black px-2 py-1 rounded flex items-center gap-1 order-first sm:order-last">
+                        {langInfo?.type === "image" ? (
+                          <Image
+                            src={langInfo.flag}
+                            alt={langInfo.name}
+                            width={16}
+                            height={16}
+                            className="inline-block"
+                          />
+                        ) : (
+                          <span>{langInfo?.flag}</span>
+                        )}
+                        {langInfo?.name ?? lang}
+                      </span>
                     </div>
-                    
-                    {/* 🚩 ۲. محتوای متنی */}
-                    <div className={`sm:w-2/3 flex-grow min-w-0 ${fontClass}`}>
-                        
-                        {/* عنوان */}
-                        <h2 className="text-xl sm:text-2xl font-semibold text-amber-300 mb-2">
-                            {title}
-                        </h2>
-                        
-                        {/* 🔑 زبان و تاریخ در یک خط (با فاصله بینابینی) */}
-                        <div className="flex justify-between items-center mb-3">
-                            <p className="text-sm text-amber-600 order-last sm:order-first">{date}</p>
-                            
-                            <span className="text-xs bg-amber-700 text-black px-2 py-1 rounded flex items-center gap-1 order-first sm:order-last">
-                                {langInfo?.type === "image" ? (
-                                    <Image
-                                        src={langInfo.flag}
-                                        alt={langInfo.name}
-                                        width={16}
-                                        height={16}
-                                        className="inline-block"
-                                    />
-                                ) : (
-                                    <span>{langInfo?.flag}</span>
-                                )}
-                                {langInfo?.name ?? lang}
-                            </span>
-                        </div>
-                        
-                        {/* 🔑 خلاصه متن (Excerpt): برای موبایل حیاتی است */}
-                        <p className="text-amber-500 mt-2 opacity-80 line-clamp-3">
-                           {excerpt} 
-                        </p>
-                        
-                        {/* لینک "بیشتر بخوانید" */}
-                        <p className="text-amber-500 mt-3 font-semibold hover:underline">
-                            {readMoreText} →
-                        </p>
-                    </div>
+
+                    {/* 🔑 خلاصه متن (Excerpt): برای موبایل حیاتی است */}
+                    <p className="text-amber-500 mt-2 opacity-80 line-clamp-3">
+                      {excerpt}
+                    </p>
+
+                    {/* لینک "بیشتر بخوانید" */}
+                    <p className="text-amber-500 mt-3 font-semibold hover:underline">
+                      {readMoreText} →
+                    </p>
+                  </div>
                 </div>
               </Link>
             </DynamicTiltEffect>
