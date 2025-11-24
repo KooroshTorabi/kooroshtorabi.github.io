@@ -47,7 +47,7 @@ interface BlogProps {
 // --- GetStaticProps (بدون تغییر) ---
 export const getStaticProps: GetStaticProps<BlogProps> = async ({ locale }) => {
   const currentLocale = locale || "en";
-  const posts = getAllPosts();
+  const posts = await getAllPosts();
 
   return {
     props: {

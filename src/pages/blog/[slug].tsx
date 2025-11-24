@@ -1,20 +1,31 @@
 // pages/blog/[slug].tsx
 
 import languageOptions from "@lib/languageOptions";
-import { getAllPosts, getPostBySlug, type PostData } from "@lib/posts";
+// 💡 توجه: getAllPosts و getPostBySlug اکنون async هستند
+import { getAllPosts, getPostBySlug, type PostData } from "@lib/posts"; 
 import NeonButton from "@src/components/ui/NeonButton";
 import Header from "@ui/Header";
-import { marked } from "marked";
+
+// 💡 ماژول‌های Unified جایگزین marked می‌شوند
+import { unified } from "unified";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
+import rehypeStringify from "rehype-stringify";
+import remarkGfm from "remark-gfm"; // 👈 پشتیبانی از جداول، تسک لیست‌ها و لینک‌های خودکار
+
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
 import { Pixelify_Sans, Vazirmatn } from "next/font/google";
 import Link from "next/link";
+import Image from "next/image"; // برای استفاده صحیح از Image
 
 // 🚩 بارگذاری پویا برای جلوگیری از رندر SSR
 const DynamicTileEffect = dynamic(() => import("@ui/TileEffect"), {
-  ssr: false, // ❌ مهم: حتماً SSR را غیرفعال کنید
+  ssr: false, 
   loading: () => (
     <div className="h-64 sm:h-80 md:h-96 bg-stone-700 animate-pulse" />
   ),
@@ -31,22 +42,39 @@ const DynamicWaveEffect = dynamic(() => import("@ui/WaveEffect"), {
 const VazirmatnFont = Vazirmatn({ subsets: ["latin"], weight: ["400"] });
 const PixlifyFont = Pixelify_Sans({ subsets: ["latin"], weight: ["400"] });
 
-// 🚩 مسیر تصویر پیش‌فرض (باید در public/images/ باشد)
+// 🚩 مسیر تصویر پیش‌فرض 
 const DEFAULT_COVER_IMAGE = "/images/default-blog-cover.jpg";
 
 // --- Type Definitions (اضافه شدن پراپ ترجمه‌ها) ---
 interface PostPageProps {
-  post: PostData; // فرض بر این است که شامل coverImage?: string است
+  post: PostData; 
   contentHtml: string;
-  uiLang: string; // زبان UI (locale)
-  // 🚩 ترجمه‌های دکمه‌ها بر اساس زبان محتوای پست
+  uiLang: string; 
   contentTKeys: { backToBlog: string; mainPage: string };
 }
 
-// --- GetStaticPaths (بدون تغییر) ---
+// 🆕 تابع تبدیل Markdown به HTML با Unified (به جای marked)
+async function processMarkdown(markdown: string): Promise<string> {
+    const file = await unified()
+        .use(remarkParse)
+        .use(remarkGfm) // 👈 پشتیبانی از جداول و سینتکس GitHub
+        .use(remarkRehype, { allowDangerousHtml: true })
+        .use(rehypeRaw)
+        .use(rehypeSanitize) // ایمن‌سازی محتوای HTML تولید شده
+        .use(rehypeStringify)
+        .process(markdown);
+    
+    return String(file);
+}
+
+
+// --- GetStaticPaths (تصحیح شده) ---
 export const getStaticPaths: GetStaticPaths = async () => {
-  const posts = getAllPosts();
+  // 🔑 تصحیح: استفاده از await برای حل Promise
+  const posts = await getAllPosts(); 
+  
   const uiLangs = ["en", "fa", "de"];
+  // 💥 اکنون posts یک آرایه واقعی است و map کار می‌کند
   const uniqueSlugs = Array.from(new Set(posts.map((p) => p.slug)));
 
   const paths = uniqueSlugs.flatMap((slug) =>
@@ -59,7 +87,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
   return { paths, fallback: false };
 };
 
-// --- GetStaticProps (اصلاح شده برای بارگذاری ترجمه محتوا و رفع خطای بیلد) ---
+
+// --- GetStaticProps (اصلاح شده) ---
 export const getStaticProps: GetStaticProps<PostPageProps> = async ({
   params,
   locale,
@@ -68,15 +97,14 @@ export const getStaticProps: GetStaticProps<PostPageProps> = async ({
   const slug = params?.slug as string;
 
   if (!slug) return { notFound: true };
-
-  const post = getPostBySlug(slug);
+  
+  // 🔑 تصحیح: استفاده از await برای حل Promise
+  const post = await getPostBySlug(slug);
   if (!post) return { notFound: true };
-
-  marked.setOptions({
-    //... سایر تنظیمات
-    breaks: true, // 👈 این گزینه خطوط جدید تکی را به <br> تبدیل می‌کند
-  });
-  const contentHtml: string = await marked.parse(post.content || "");
+  
+  // 💡 تبدیل Markdown به HTML با Unified (برای جداول)
+  const contentHtml: string = await processMarkdown(post.content || "");
+  
   const contentLang = post.lang || "en";
   const namespaces = ["common"];
 
@@ -89,7 +117,7 @@ export const getStaticProps: GetStaticProps<PostPageProps> = async ({
     namespaces,
   );
 
-  // 🚩 دسترسی ایمن به ترجمه‌ها برای رفع خطاهای TypeScript
+  // 🚩 دسترسی ایمن به ترجمه‌ها 
   const contentCommonT =
     contentTranslations._nextI18Next?.initialI18nStore?.[contentLang]?.common ||
     {};
@@ -103,10 +131,10 @@ export const getStaticProps: GetStaticProps<PostPageProps> = async ({
   return {
     props: {
       post,
-      contentHtml,
+      contentHtml, // 👈 محتوای HTML تبدیل شده توسط Unified
       uiLang,
-      contentTKeys, // 👈 تزریق ترجمه‌های دکمه (زبان محتوا)
-      ...uiTranslations, // 👈 تزریق ترجمه‌های UI (زبان رابط کاربری)
+      contentTKeys, 
+      ...uiTranslations, 
     },
   };
 };
@@ -120,6 +148,7 @@ const PostPage: NextPage<PostPageProps> = ({
 }) => {
   // t() فقط برای ترجمه سایر عناصر UI (در صورت لزوم) استفاده می‌شود
   const { t } = useTranslation("common");
+  
 
   const contentLang = post.lang || "en";
   const langInfo = languageOptions.find((l) => l.code === contentLang);
@@ -129,7 +158,6 @@ const PostPage: NextPage<PostPageProps> = ({
 
   // 🚩 منطق تعیین تصویر کاور
   const imageUrl = post.coverImage || DEFAULT_COVER_IMAGE;
-  const altText = `Cover image for post: ${post.title}`;
 
   return (
     <div
@@ -139,24 +167,13 @@ const PostPage: NextPage<PostPageProps> = ({
       <Header currentLang={uiLang} />
 
       {/* 🚩 کانتینر تصویر کاور */}
-
       <div className="max-w-3xl mx-auto rounded-xl overflow-hidden shadow-2xl mt-5">
         <div className="w-full h-64 sm:h-80 md:h-96">
-          {/* ✅ جایگزینی Image با کامپوننت 3D */}
-          {/* <DynamicTileEffect imageUrl={imageUrl} /> */}
+          {/* ✅ استفاده از DynamicWaveEffect */}
           <DynamicWaveEffect imageUrl={imageUrl} />
         </div>
-
-        {/* <Image
-          src={imageUrl}
-          alt={altText}
-          // ابعاد تصویر را تنظیم کنید (مثلاً عرض 800 و ارتفاع 450 برای نسبت 16:9)
-          width={100}
-          height={250} // 👈 کاهش ارتفاع
-          className="object-cover w-svw h-64 sm:h-80 md:h-96"
-          priority={true}
-        /> */}
       </div>
+      
       <div className="max-w-3xl mx-auto mt-5">
         <article className="max-w-3xl mx-auto bg-stone-800 p-8 rounded-2xl shadow-lg mt-5">
           <h1 className="text-3xl md:text-4xl font-bold text-amber-400 mb-4">
@@ -167,16 +184,16 @@ const PostPage: NextPage<PostPageProps> = ({
           </p>
 
           <div
-            className="prose prose-invert prose-amber max-w-none prose-p:mb-8"
-            // biome-ignore lint/security/noDangerouslySetInnerHtml: محتوای مارک‌داون
-            dangerouslySetInnerHTML={{ __html: contentHtml }}
+            className="prose prose-invert prose-amber max-w-none prose-p:mb-18"
+            
+            // ⚠️ اینجا باید از محتوای HTML تولید شده استفاده کنید
+            dangerouslySetInnerHTML={{ __html: contentHtml }} 
           />
 
           <div className="mt-8 flex gap-4">
             <NeonButton
               href={`/blog`}
               locale={uiLang}
-              // کلاس‌های Tailwind برای متن و رنگ‌ها را منتقل کنید
               className="px-6 py-3 rounded-lg bg-stone-700 text-amber-300 font-semibold hover:bg-amber-500 hover:text-black transition"
             >
               ← {contentTKeys.backToBlog}
@@ -187,7 +204,6 @@ const PostPage: NextPage<PostPageProps> = ({
               locale={uiLang}
               className="px-6 py-3 rounded-lg bg-stone-700  text-amber-300 font-semibold hover:bg-amber-500   hover:text-black transition"
             >
-              {/* 🚩 استفاده از ترجمه تزریق شده زبان محتوا */}
               {contentTKeys.mainPage}
             </Link>
           </div>
