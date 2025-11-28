@@ -1,4 +1,4 @@
 {
-  "allPosts": "تمام مطالب"
-  
+  "allPosts": "تمام مطالب",
+  "filteredPosts": "{{count}} مطلب یافت شد"
 }

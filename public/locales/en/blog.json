@@ -1,3 +1,4 @@
 {
-  "allPosts": "All Posts"
+  "allPosts": "All Posts",
+  "filteredPosts": "{{count}} Posts found"
 }
