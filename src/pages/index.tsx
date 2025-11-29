@@ -33,13 +33,22 @@ const TextCrawlCanvas = dynamic<{ children: React.ReactNode; locale?: string }>(
   },
 );
 
+// 1. ایمپورت کردن GridCanvas به صورت پویا
+const LazyGridCanvas = dynamic(
+  () => import("../components/ui/GridCanvas"), // ⬅️ مسیر GridCanvas.tsx شما
+  {
+    ssr: false, // مهم برای WebGL
+    loading: () => <div style={{ height: "100vh", background: "black" }} />,
+  },
+);
+
 export default function HomePage() {
   const { t } = useTranslation("common");
   const router = useRouter();
 
   const currentLocale = router.locale;
   const pageDirection =
-    currentLocale === "fa" ? "top-4 left-4" : "top-4 right-4"; // 'fa' (فارسی) راست‌چین است.
+    currentLocale === "fa" ? "top-4 left-4" : " top-4 right-4 "; // 'fa' (فارسی) راست‌چین است.
   const changeLanguage = (currentLng: string | undefined) => {
     const supportedLocales = ["fa", "en", "de"];
     const currentIndex = supportedLocales.indexOf(currentLng + "");
@@ -51,39 +60,40 @@ export default function HomePage() {
 
   return (
     <div
-      className={`min-h-screen flex flex-col text-amber-600 bg-stone-900 p-10  ${currentLocale === "fa" ? VazirmatnFont.className : PixlifyFont.className}`}
+      className={`min-h-screen flex flex-col text-amber-600 bg-stone-900 p-3 ${currentLocale === "fa" ? VazirmatnFont.className : PixlifyFont.className}`}
     >
+      {/* <LazyGridCanvas /> */}
       <div className="space-x-4">
-        <h4 className="text-1xl mb-6">{t("siteTitle")}</h4>
-        <div
-          className={`absolute ${pageDirection} w-full max-w-xs flex justify-end`}
-        >
+        <h4 className="text-center text-1xl mb-2 md:mb-6 mt-14 sm:mt-0 md:mt-0 lg:mt-0">
+          {t("siteTitle")}
+        </h4>
+        <div className={`absolute ${pageDirection} `}>
           <LanguageSwitcher />
         </div>
       </div>
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="pt-1  h-full w-full ">
         <div
-          className={`w-full max-w-7xl mx-auto px-6 text-center ${currentLocale === "fa" ? VazirmatnFont.className : PixlifyFont.className}`}
+          className={`px-2 md:px-10 text-center ${currentLocale === "fa" ? VazirmatnFont.className : PixlifyFont.className}`}
         >
           <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-3">
             {t("mainHeading")}
           </h1>
           {/* Mobile version (simple div text) */}
-          <div className="relative w-full mb-12 rounded-lg bg-stone-800 text-white p-4 block md:hidden">
+          <div className="relative w-full mb-0 md:mb-12 rounded-lg bg-stone-800 text-white p-4  block md:hidden">
             {textWithLineBreaks(t("introParagraph"))}
             {/* متن مخصوص موبایل */}
           </div>
 
           {/* Desktop version (show TextCrawlCanvas) */}
-          <div className="relative h-96 w-full mb-12 overflow-hidden hidden md:block">
-            <div className="absolute inset-0 pointer-events-none">
+          <div className="flex flex-wrap items-center justify-center h-120  overflow-hidden hidden md:block  rounded-lg  ">
+            <div className="absolute mt-40 h-7/12   inset-0 pointer-events-none">
               <TextCrawlCanvas locale={currentLocale}>
                 {t("introParagraph")}
               </TextCrawlCanvas>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
+          <div className="mt-7 md:mt-50 flex flex-wrap items-center justify-center gap-4 mb-12">
             <NeonButton
               href={`/blog`}
               locale={currentLocale}
@@ -99,31 +109,6 @@ export default function HomePage() {
             >
               {t("aboutButton")}
             </NeonButton>
-          </div>
-
-          <div className="flex items-center justify-center gap-6">
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-600 hover:text-slate-900 transition-colors"
-            >
-              {/* <Github className="w-6 h-6" /> */}
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-600 hover:text-slate-900 transition-colors"
-            >
-              {/* <Linkedin className="w-6 h-6" /> */}
-            </a>
-            <a
-              href="mailto:hello@example.com"
-              className="text-slate-600 hover:text-slate-900 transition-colors"
-            >
-              {/* <Mail className="w-6 h-6" /> */}
-            </a>
           </div>
         </div>
       </div>
