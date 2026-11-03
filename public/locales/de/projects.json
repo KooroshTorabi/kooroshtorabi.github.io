@@ -1,0 +1,12 @@
+{
+  "title": "Persönliche Projekte",
+  "intro": "Eine Auswahl von Projekten, die ich in meiner Freizeit gebaut habe — Experimente, Werkzeuge und Ideen, die zu funktionierender Software geworden sind.",
+  "projects": [
+    {
+      "title": "KMSwitch",
+      "description": "Ein quelloffener Hardware-Umschalter für Tastatur/Maus (KVM) für zwei Computer, basierend auf dem RP2040. Umschalten per Hotkey oder durch Bewegen der Maus über den Bildschirmrand — keine Host-Software, funktioniert im BIOS, mit gemeinsamem microSD-Laufwerk und galvanischer Trennung.",
+      "tech": ["RP2040", "KiCad", "OpenSCAD", "USB-HID", "Python"],
+      "github": "https://github.com/KooroshTorabi/KMSwitch"
+    }
+  ]
+}

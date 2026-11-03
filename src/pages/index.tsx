@@ -1,125 +1,158 @@
-// import Github from "@/assets/icons/github.svg";
-// import Linkedin from "@/assets/icons/linkedin.svg";
-// import Mail from "@/assets/icons/mail.svg";
-import NeonButton from "@src/components/ui/NeonButton";
-import LanguageSwitcher from "@ui/LanguageSwitcher";
-import { textWithLineBreaks } from "@utils/textWithLineBreaks";
+import { getAllPosts, type PostData } from "@lib/posts";
+import languageOptions from "@lib/languageOptions";
+import Header from "@ui/Header";
+import NeonButton from "@ui/NeonButton";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import dynamic from "next/dynamic";
-import { Pixelify_Sans, Vazirmatn } from "next/font/google";
+import { Inter, Vazirmatn } from "next/font/google";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 const VazirmatnFont = Vazirmatn({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-vazirmatn",
+  subsets: ["latin", "arabic"],
+  weight: ["400", "700"],
 });
+const InterFont = Inter({ subsets: ["latin"] });
 
-const PixlifyFont = Pixelify_Sans({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-pixlify",
-});
-const TextCrawlCanvas = dynamic<{ children: React.ReactNode; locale?: string }>(
-  () => import("../components/ui/TextCrawl"),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="h-96 flex items-center justify-center text-white">
-        Loading...
-      </div>
-    ),
-  },
-);
+interface HomePageProps {
+  latestPosts: PostData[];
+}
 
-// 1. ایمپورت کردن GridCanvas به صورت پویا
-const LazyGridCanvas = dynamic(
-  () => import("../components/ui/GridCanvas"), // ⬅️ مسیر GridCanvas.tsx شما
-  {
-    ssr: false, // مهم برای WebGL
-    loading: () => <div style={{ height: "100vh", background: "black" }} />,
-  },
-);
-
-export default function HomePage() {
+export default function HomePage({ latestPosts }: HomePageProps) {
   const { t } = useTranslation("common");
   const router = useRouter();
-
-  const currentLocale = router.locale;
-  const pageDirection =
-    currentLocale === "fa" ? "top-4 left-4" : " top-4 right-4 "; // 'fa' (فارسی) راست‌چین است.
-  const changeLanguage = (currentLng: string | undefined) => {
-    const supportedLocales = ["fa", "en", "de"];
-    const currentIndex = supportedLocales.indexOf(currentLng + "");
-    const nextIndex = (currentIndex + 1) % supportedLocales.length;
-    const nextLng = supportedLocales[nextIndex];
-
-    router.push(router.asPath, router.asPath, { locale: nextLng });
-  };
+  const locale = router.locale;
+  const isFa = locale === "fa";
+  const dir = isFa ? "rtl" : "ltr";
+  const fontClass = isFa ? VazirmatnFont.className : InterFont.className;
 
   return (
     <div
-      className={`min-h-screen flex flex-col text-amber-600 bg-stone-900 p-3 ${currentLocale === "fa" ? VazirmatnFont.className : PixlifyFont.className}`}
+      className={`min-h-screen bg-stone-900 text-amber-300 ${fontClass}`}
+      dir={dir}
     >
-      {/* <LazyGridCanvas /> */}
-      <div className="space-x-4">
-        <h4 className="text-center text-1xl mb-2 md:mb-6 mt-14 sm:mt-0 md:mt-0 lg:mt-0">
-          {t("siteTitle")}
-        </h4>
-        <div className={`absolute ${pageDirection} `}>
-          <LanguageSwitcher />
-        </div>
+      <div className="px-3 sm:px-5 pt-4">
+        <Header currentLang={locale} />
       </div>
-      <div className="pt-1  h-full w-full ">
-        <div
-          className={`px-2 md:px-10 text-center ${currentLocale === "fa" ? VazirmatnFont.className : PixlifyFont.className}`}
-        >
-          <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-3">
-            {t("mainHeading")}
+
+      <main className="max-w-4xl mx-auto px-5 pt-10 sm:pt-14 pb-16 flex flex-col items-center">
+        {/* 🔹 بخش معرفی (Hero) */}
+        <section className="text-center">
+          <div className="w-36 h-36 sm:w-40 sm:h-40 mx-auto mb-6 rounded-full border-4 border-amber-500 overflow-hidden bg-stone-700 shadow-2xl">
+            <Image
+              src="/images/KouroshTorabi.jpg"
+              alt={t("heroTitle")}
+              width={160}
+              height={160}
+              className="object-cover w-full h-full"
+            />
+          </div>
+          <h1 className="text-3xl sm:text-5xl font-bold text-amber-400 mb-3">
+            {t("heroTitle")}
           </h1>
-          {/* Mobile version (simple div text) */}
-          <div className="relative w-full mb-0 md:mb-12 rounded-lg bg-stone-800 text-white p-4  block md:hidden">
-            {textWithLineBreaks(t("introParagraph"))}
-            {/* متن مخصوص موبایل */}
-          </div>
+          <p className="text-lg sm:text-2xl text-amber-500 mb-6">
+            {t("heroSubtitle")}
+          </p>
+          <p className="max-w-2xl mx-auto text-base sm:text-lg leading-relaxed text-amber-200/90">
+            {t("heroIntro")}
+          </p>
+        </section>
 
-          {/* Desktop version (show TextCrawlCanvas) */}
-          <div className="flex flex-wrap items-center justify-center h-120  overflow-hidden hidden md:block  rounded-lg  ">
-            <div className="absolute mt-40 h-7/12   inset-0 pointer-events-none">
-              <TextCrawlCanvas locale={currentLocale}>
-                {t("introParagraph")}
-              </TextCrawlCanvas>
-            </div>
-          </div>
-
-          <div className="mt-7 md:mt-50 flex flex-wrap items-center justify-center gap-4 mb-12">
+        {/* 🔹 کارت‌های معرفی (درباره من و وبلاگ) */}
+        <section className="mt-14 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+          <div className="bg-stone-800 rounded-2xl p-8 shadow-lg">
+            <h2 className="text-2xl font-semibold text-amber-400 mb-3">
+              {t("aboutCardTitle")}
+            </h2>
+            <p className="text-amber-300/90 leading-relaxed mb-6">
+              {t("aboutCardText")}
+            </p>
             <NeonButton
-              href={`/blog`}
-              locale={currentLocale}
-              className="mx-8 px-6 py-3 rounded-lg bg-stone-700 text-amber-300 font-semibold hover:bg-amber-500 hover:text-black transition"
-            >
-              {t("blogButton")}
-            </NeonButton>
-
-            <NeonButton
-              href={`/about`}
-              locale={currentLocale}
-              className="px-6 py-3 rounded-lg bg-stone-700 text-amber-300 font-semibold hover:bg-amber-500 hover:text-black transition"
+              href="/about"
+              locale={locale}
+              className="bg-stone-700 text-amber-300 hover:bg-amber-500 hover:text-black"
             >
               {t("aboutButton")}
             </NeonButton>
           </div>
-        </div>
-      </div>
+
+          <div className="bg-stone-800 rounded-2xl p-8 shadow-lg">
+            <h2 className="text-2xl font-semibold text-amber-400 mb-3">
+              {t("blogCardTitle")}
+            </h2>
+            <p className="text-amber-300/90 leading-relaxed mb-6">
+              {t("blogCardText")}
+            </p>
+            <NeonButton
+              href="/blog"
+              locale={locale}
+              className="bg-stone-700 text-amber-300 hover:bg-amber-500 hover:text-black"
+            >
+              {t("blogButton")}
+            </NeonButton>
+          </div>
+        </section>
+
+        {/* 🔹 آخرین نوشته‌ها */}
+        {latestPosts.length > 0 && (
+          <section className="mt-16 w-full">
+            <h2 className="text-2xl sm:text-3xl font-bold text-amber-400 mb-6 text-center">
+              {t("latestPosts")}
+            </h2>
+            <div className="space-y-4">
+              {latestPosts.map((post) => {
+                const langInfo = languageOptions.find(
+                  (l) => l.code === post.lang,
+                );
+                const postDir = langInfo?.dir || "ltr";
+                const postFont =
+                  post.lang === "fa"
+                    ? VazirmatnFont.className
+                    : InterFont.className;
+                return (
+                  <Link
+                    key={post.slug}
+                    href={`/blog/${post.slug}`}
+                    locale={locale}
+                    dir={postDir}
+                    className={`block bg-stone-800 rounded-xl p-5 shadow-md hover:bg-stone-700 transition ${postFont}`}
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      <h3 className="text-lg sm:text-xl font-semibold text-amber-300">
+                        {post.title}
+                      </h3>
+                      <span className="text-sm text-amber-600 whitespace-nowrap">
+                        {post.date}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+            <div className="mt-8 text-center">
+              <NeonButton
+                href="/blog"
+                locale={locale}
+                className="bg-stone-700 text-amber-300 hover:bg-amber-500 hover:text-black"
+              >
+                {t("viewAllPosts")}
+              </NeonButton>
+            </div>
+          </section>
+        )}
+      </main>
     </div>
   );
 }
 
 export async function getStaticProps({ locale }: { locale: string }) {
-  // لود کردن فایل common.json برای زبان فعلی (locale)
+  const posts = await getAllPosts();
+  const latestPosts = posts.slice(0, 3);
+
   return {
     props: {
+      latestPosts,
       ...(await serverSideTranslations(locale, ["common"])),
     },
   };

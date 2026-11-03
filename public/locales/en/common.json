@@ -3,6 +3,7 @@
   "siteTitle": "Kourosh Torabijafroudi - Software Developer Blog",
   "blog": "Blog",
   "blogButton": "Blog",
+  "projectsButton": "Projects",
   "mainHeading": "Kourosh's Journal",
   "introParagraph": " Here, I occasionally publish posts that I personally find interesting or inspiring and would like to share with others.\nThe topics of these posts are not limited to a single area; you will find everything from software technology, programming, and modern tools to electronics, personal projects, various languages, and anything I find worthwhile to learn.\n\nThis space serves as a collection of experiences, ideas, and things I encounter on my learning and work journey – a diverse collection of knowledge that may also be useful or inspiring for you.",
   "resumeButton": "View Resume",
@@ -11,5 +12,15 @@
   "allPosts": "All Posts",
   "backToBlog": "Back to Blog",
   "mainPage": "Main Page",
-  "aboutButton": "About"
+  "home": "Home",
+  "aboutButton": "About",
+  "heroTitle": "Kourosh Torabijafroudi",
+  "heroSubtitle": "Full Stack Software Developer",
+  "heroIntro": "I'm a full stack developer based in Vienna, building modern, user-focused web applications with Next.js, React, Java, C#, and SQL. Here you'll find a bit about me and a blog where I share what I learn and find inspiring.",
+  "aboutCardTitle": "About Me",
+  "aboutCardText": "Get to know my background, skills, and experience — from payment gateways and web platforms to core banking systems and scalable frontends.",
+  "blogCardTitle": "Blog",
+  "blogCardText": "Occasional posts on software, programming, electronics, and anything else I find worth learning and sharing.",
+  "latestPosts": "Latest Posts",
+  "viewAllPosts": "View all posts"
 }

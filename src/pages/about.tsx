@@ -6,7 +6,7 @@ import type { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
-import { Pixelify_Sans, Vazirmatn } from "next/font/google";
+import { Inter, Vazirmatn } from "next/font/google";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
@@ -20,7 +20,7 @@ const VazirmatnFont = Vazirmatn({
   subsets: ["latin", "arabic"],
   weight: ["400", "700"],
 });
-const PixlifyFont = Pixelify_Sans({ subsets: ["latin"], weight: ["400"] });
+const InterFont = Inter({ subsets: ["latin"] });
 
 // --- GetStaticProps (برای بارگذاری ترجمه) ---
 export const getStaticProps = async ({ locale }: { locale: string }) => {
@@ -53,7 +53,7 @@ const AboutPage: NextPage = () => {
 
   // انتخاب کلاس فونت بر اساس زبان فعلی UI
   const isFa = i18n.language === "fa";
-  const fontClass = isFa ? VazirmatnFont.className : PixlifyFont.className;
+  const fontClass = isFa ? VazirmatnFont.className : InterFont.className;
   const pageDir = isFa ? "rtl" : "ltr";
 
   // داده‌های اصلی: 💡 استفاده از returnObjects: true برای آبجکت‌ها و آرایه‌ها
