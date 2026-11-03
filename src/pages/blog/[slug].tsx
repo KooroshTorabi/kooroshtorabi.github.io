@@ -130,7 +130,7 @@ const PostPage: NextPage<PostPageProps> = ({
   return (
     <div
       // 💡 اصلاح Mobile: کاهش Padding در موبایل
-      className={`min-h-screen bg-stone-900 text-amber-300 px-3 sm:px-5 py-5 ${fontClass} `}
+      className={`min-h-screen bg-transparent text-amber-300 px-3 sm:px-5 py-5 ${fontClass} `}
       dir={dir}
     >
       <Header currentLang={uiLang} />
@@ -148,7 +148,7 @@ const PostPage: NextPage<PostPageProps> = ({
       <div className="max-w-3xl mx-auto mt-5">
         <article
           // 💡 اصلاح Mobile: کاهش Padding در موبایل
-          className="max-w-3xl mx-auto bg-stone-800 p-4 sm:p-8 rounded-2xl shadow-lg mt-5"
+          className="max-w-3xl mx-auto bg-stone-800 p-4 sm:p-8 rounded-2xl shadow-[0_0_30px_rgba(251,191,36,0.18)] ring-1 ring-amber-300/10 mt-5"
         >
           <h1 className="text-3xl md:text-4xl font-bold text-amber-400 mb-4">
             {post.title}

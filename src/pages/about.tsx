@@ -67,7 +67,7 @@ const AboutPage: NextPage = () => {
 
   return (
     <div
-      className={`min-h-screen bg-stone-900 text-amber-300 px-5 py-5 ${fontClass}`}
+      className={`min-h-screen bg-transparent text-amber-300 px-5 py-5 ${fontClass}`}
       dir={pageDir}
     >
       <Header currentLang={locale} />
@@ -78,7 +78,7 @@ const AboutPage: NextPage = () => {
         </h1>
 
         {/* 1. بخش معرفی و اطلاعات تماس */}
-        <section className="bg-stone-800 p-8 rounded-2xl shadow-lg mb-8">
+        <section className="bg-stone-800 p-8 rounded-2xl shadow-[0_0_30px_rgba(251,191,36,0.18)] ring-1 ring-amber-300/10 mb-8">
           <div className="flex flex-col items-center justify-center text-center">
             {/* 🚩 محل قرارگیری عکس (Photo Placeholder) */}
             <div className="w-32 h-32 mb-4 rounded-full border-4 border-amber-500 overflow-hidden bg-stone-700 flex items-center justify-center shadow-2xl relative">
@@ -126,7 +126,7 @@ const AboutPage: NextPage = () => {
 
         {/* 2. خلاصه‌ی حرفه‌ای (Professional Summary) */}
         <DynamicTiltEffect maxTilt={1}>
-          <section className="bg-stone-800 p-8 rounded-2xl shadow-lg mb-8">
+          <section className="bg-stone-800 p-8 rounded-2xl shadow-[0_0_30px_rgba(251,191,36,0.18)] ring-1 ring-amber-300/10 mb-8">
             <h2 className="text-2xl font-semibold mb-4 text-amber-500">
               {t("section_about_title", "Professional Summary")}
             </h2>
@@ -138,7 +138,7 @@ const AboutPage: NextPage = () => {
         </DynamicTiltEffect>
 
         {/* 3. دانش و مهارت‌ها (Skills) - ساختار دسته‌بندی شده جدید */}
-        <section className="bg-stone-700 p-6 rounded-2xl shadow-md mb-8">
+        <section className="bg-stone-700 p-6 rounded-2xl shadow-[0_0_30px_rgba(251,191,36,0.18)] ring-1 ring-amber-300/10 mb-8">
           <h2 className="text-2xl font-semibold mb-4 text-amber-500">
             {t("section_skills_title", "Knowledge and Skills")}
           </h2>
@@ -158,7 +158,7 @@ const AboutPage: NextPage = () => {
                     skillCat.tools.map((tool, toolIndex) => (
                       <span
                         key={toolIndex.toString()}
-                        className="bg-amber-500 text-stone-900 text-sm font-medium px-3 py-1 rounded-full hover:scale-105 transition shadow-md"
+                        className="bg-amber-500 text-stone-900 text-sm font-medium px-3 py-1 rounded-full hover:scale-105 transition shadow-sm"
                       >
                         {tool}
                       </span>
@@ -177,7 +177,7 @@ const AboutPage: NextPage = () => {
           {Array.isArray(experienceData) &&
             experienceData.map((item, index) => (
               <DynamicTiltEffect key={index.toString()} maxTilt={2}>
-                <div className="bg-stone-800 p-6 rounded-xl shadow-lg mb-4 hover:bg-stone-700 transition">
+                <div className="bg-stone-800 p-6 rounded-xl shadow-[0_0_30px_rgba(251,191,36,0.18)] ring-1 ring-amber-300/10 mb-4 hover:bg-stone-700 transition">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-xl font-semibold text-amber-300">
                       {item.title}
@@ -196,7 +196,7 @@ const AboutPage: NextPage = () => {
         </section>
 
         {/* 5. تحصیلات و زبان‌ها (Education & Languages) */}
-        <section className="mb-8 p-6 bg-stone-800 rounded-xl shadow-lg">
+        <section className="mb-8 p-6 bg-stone-800 rounded-xl shadow-[0_0_30px_rgba(251,191,36,0.18)] ring-1 ring-amber-300/10">
           <h2 className="text-2xl font-semibold mb-4 text-amber-500">
             {t("section_education_title", "Education")}
           </h2>

@@ -19,7 +19,7 @@ export default function Header({ currentLang }: HeaderProps) {
 
   return (
     <header
-      className="sticky top-0 z-50 rounded-xl bg-stone-800 text-amber-300 shadow-md px-3 md:px-6 py-2 md:py-3"
+      className="sticky top-0 z-50 rounded-xl bg-stone-800 text-amber-300 shadow-xl px-3 md:px-6 py-2 md:py-3"
       dir={dir}
     >
       <div className="flex flex-col md:flex-row items-center justify-center md:justify-between gap-2 md:gap-3">

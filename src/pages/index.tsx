@@ -23,7 +23,7 @@ export default function HomePage({ latestPosts }: HomePageProps) {
 
   return (
     <div
-      className={`min-h-screen bg-stone-900 text-amber-300 ${fontClass}`}
+      className={`min-h-screen bg-transparent text-amber-300 ${fontClass}`}
       dir={dir}
     >
       <div className="px-3 sm:px-5 pt-4">
@@ -55,7 +55,7 @@ export default function HomePage({ latestPosts }: HomePageProps) {
 
         {/* 🔹 کارت‌های معرفی (درباره من و وبلاگ) */}
         <section className="mt-14 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-          <div className="bg-stone-800 rounded-2xl p-8 shadow-lg">
+          <div className="bg-stone-800 rounded-2xl p-8 shadow-[0_0_30px_rgba(251,191,36,0.18)] ring-1 ring-amber-300/10">
             <h2 className="text-2xl font-semibold text-amber-400 mb-3">
               {t("aboutCardTitle")}
             </h2>
@@ -71,7 +71,7 @@ export default function HomePage({ latestPosts }: HomePageProps) {
             </NeonButton>
           </div>
 
-          <div className="bg-stone-800 rounded-2xl p-8 shadow-lg">
+          <div className="bg-stone-800 rounded-2xl p-8 shadow-[0_0_30px_rgba(251,191,36,0.18)] ring-1 ring-amber-300/10">
             <h2 className="text-2xl font-semibold text-amber-400 mb-3">
               {t("blogCardTitle")}
             </h2>
@@ -110,7 +110,7 @@ export default function HomePage({ latestPosts }: HomePageProps) {
                     href={`/blog/${post.slug}`}
                     locale={locale}
                     dir={postDir}
-                    className={`block bg-stone-800 rounded-xl p-5 shadow-md hover:bg-stone-700 transition ${postFont}`}
+                    className={`block bg-stone-800 rounded-xl p-5 shadow-[0_0_30px_rgba(251,191,36,0.18)] ring-1 ring-amber-300/10 hover:bg-stone-700 transition ${postFont}`}
                   >
                     <div className="flex items-center justify-between gap-4">
                       <h3 className="text-lg sm:text-xl font-semibold text-amber-300">

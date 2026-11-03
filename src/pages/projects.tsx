@@ -33,7 +33,7 @@ const ProjectsPage = () => {
 
   return (
     <div
-      className={`min-h-screen bg-stone-900 text-amber-300 px-3 sm:px-5 py-5 ${fontClass}`}
+      className={`min-h-screen bg-transparent text-amber-300 px-3 sm:px-5 py-5 ${fontClass}`}
       dir={pageDir}
     >
       <Header currentLang={locale} />
@@ -51,7 +51,7 @@ const ProjectsPage = () => {
             projects.map((project, index) => (
               <div
                 key={index.toString()}
-                className="bg-stone-800 rounded-2xl p-6 shadow-lg flex flex-col"
+                className="bg-stone-800 rounded-2xl p-6 shadow-[0_0_30px_rgba(251,191,36,0.18)] ring-1 ring-amber-300/10 flex flex-col"
               >
                 <h2 className="text-xl font-semibold text-amber-400 mb-2">
                   {project.title}
