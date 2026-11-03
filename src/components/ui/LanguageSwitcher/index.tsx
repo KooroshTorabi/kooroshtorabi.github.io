@@ -2,7 +2,7 @@
 
 import languageOptions from "@src/lib/languageOptions";
 import { useTranslation } from "next-i18next";
-import { Pixelify_Sans, Vazirmatn } from "next/font/google";
+import { Inter, Vazirmatn } from "next/font/google";
 import Image from "next/image"; // 👈 مطمئن شوید که این ایمپورت را اضافه کنید
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -13,11 +13,7 @@ const VazirmatnFont = Vazirmatn({
   variable: "--font-vazirmatn",
 });
 
-const PixlifyFont = Pixelify_Sans({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-pixlify",
-});
+const InterFont = Inter({ subsets: ["latin"] });
 // 👈 تصحیح نام تابع
 const LanguageSwitcher = () => {
   const router = useRouter();
@@ -63,7 +59,7 @@ const LanguageSwitcher = () => {
       >
         {renderFlag(currentLanguage)}
         <div
-          className={`px-2 ${currentLocale === "fa" ? VazirmatnFont.className : PixlifyFont.className}`}
+          className={`px-2 ${currentLocale === "fa" ? VazirmatnFont.className : InterFont.className}`}
         >
           {currentLanguage.name}
         </div>
@@ -102,7 +98,7 @@ const LanguageSwitcher = () => {
                   onClick={() => changeLanguage(lang.code)}
                   role="menuitem"
                   // 👈 استایل‌های آیتم منو: text-white، hover:bg-stone-700، عرض کامل
-                  className={`flex items-center w-full px-2 py-1 text-xs text-amber-500 hover:bg-amber-700 ${lang.code === "fa" ? VazirmatnFont.className : PixlifyFont.className}`}
+                  className={`flex items-center w-full px-2 py-1 text-xs text-amber-500 hover:bg-amber-700 ${lang.code === "fa" ? VazirmatnFont.className : InterFont.className}`}
                 >
                   {renderFlag(lang)}
                   {lang.name}

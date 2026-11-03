@@ -19,14 +19,14 @@ const DynamicTiltEffect = dynamic(() => import("@ui/TiltEffect"), {
 });
 
 // 🚩 ایمپورت فونت‌ها
-import { Pixelify_Sans, Vazirmatn } from "next/font/google";
+import { Inter, Vazirmatn } from "next/font/google";
 
 // 🚩 تعریف فونت‌ها
 const VazirmatnFont = Vazirmatn({
   subsets: ["latin", "arabic"],
   weight: ["400", "700"],
 });
-const PixlifyFont = Pixelify_Sans({ subsets: ["latin"], weight: ["400"] });
+const InterFont = Inter({ subsets: ["latin"] });
 
 const DEFAULT_COVER_IMAGE = "/images/default-blog-cover.jpg";
 
@@ -100,6 +100,8 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
 
   const currentLangInfo = languageOptions.find((l) => l.code === i18n.language);
   const pageDir = currentLangInfo?.dir || "ltr";
+  const pageFontClass =
+    i18n.language === "fa" ? VazirmatnFont.className : InterFont.className;
 
   const getReadMoreText = (contentLang: string) => {
     if (contentLang === "fa") {
@@ -110,13 +112,13 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
 
   return (
     <div
-      className="min-h-screen bg-stone-900 text-amber-500 px-3 sm:px-5 py-5 pb-5 pt-5" // 💡 کاهش px برای موبایل
+      className={`min-h-screen bg-stone-900 text-amber-500 px-3 sm:px-5 py-5 pb-5 pt-5 ${pageFontClass}`}
       dir={pageDir}
     >
       <Header currentLang={locale} />
 
       {/* 🔑 اعمال عنوان داینامیک */}
-      <h1 className="text-4xl font-bold mb-3 mt-6 text-center text-amber-400 pixelify-sans-regular">
+      <h1 className="text-4xl font-bold mb-3 mt-6 text-center text-amber-400">
         {pageTitle}
       </h1>
 
@@ -137,7 +139,7 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
           const imageUrl = coverImage || DEFAULT_COVER_IMAGE;
           const altText = `Cover image for post: ${title}`;
           const fontClass =
-            lang === "fa" ? VazirmatnFont.className : PixlifyFont.className;
+            lang === "fa" ? VazirmatnFont.className : InterFont.className;
 
           return (
             <DynamicTiltEffect key={`${lang}-${slug}`} maxTilt={6}>

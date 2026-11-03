@@ -1,7 +1,7 @@
 // src/components/BlogLanguageSwitcher.tsx
 
 import languageOptions, { type LanguageOption } from "@lib/languageOptions";
-import { Pixelify_Sans, Vazirmatn } from "next/font/google";
+import { Inter, Vazirmatn } from "next/font/google";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -10,11 +10,7 @@ const VazirmatnFont = Vazirmatn({
   weight: ["400"],
   variable: "--font-vazirmatn",
 });
-const PixlifyFont = Pixelify_Sans({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-pixlify",
-});
+const InterFont = Inter({ subsets: ["latin"] });
 
 interface Props {
   currentLang?: string | null; // null = همه زبان‌ها
@@ -73,7 +69,7 @@ export default function BlogLanguageSwitcher({ currentLang, onChange }: Props) {
       >
         {renderFlag(currentOption)}
         <div
-          className={`px-2 ${currentOption.code === "fa" ? VazirmatnFont.className : PixlifyFont.className}`}
+          className={`px-2 ${currentOption.code === "fa" ? VazirmatnFont.className : InterFont.className}`}
         >
           {currentOption.name}
         </div>
@@ -100,7 +96,7 @@ export default function BlogLanguageSwitcher({ currentLang, onChange }: Props) {
             <button
               type="button"
               onClick={() => handleSelect(null)}
-              className={`flex items-center w-full px-2 py-1 text-xs text-amber-500 hover:bg-amber-700 ${PixlifyFont.className}`}
+              className={`flex items-center w-full px-2 py-1 text-xs text-amber-500 hover:bg-amber-700 ${InterFont.className}`}
             >
               {renderFlag(allOption)}
               {allOption.name}
@@ -114,7 +110,7 @@ export default function BlogLanguageSwitcher({ currentLang, onChange }: Props) {
                 className={`flex items-center w-full px-2 py-1 text-xs text-amber-500 hover:bg-amber-700 ${
                   lang.code === "fa"
                     ? VazirmatnFont.className
-                    : PixlifyFont.className
+                    : InterFont.className
                 }`}
               >
                 {renderFlag(lang)}

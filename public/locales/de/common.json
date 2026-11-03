@@ -3,6 +3,7 @@
   "siteTitle": "Kourosh Torabijafroudi - Softwareentwickler-Blog",
   "blog": "Blog",
   "blogButton": "Blog",
+  "projectsButton": "Projekte",
   "mainHeading": "Journal von Kourosh",
   "introParagraph": " Hier veröffentliche ich gelegentlich Beiträge, die ich persönlich interessant oder inspirierend finde und gerne mit anderen teilen möchte.\nDie Themen dieser Beiträge sind nicht auf einen Bereich beschränkt; Sie finden hier alles von Softwaretechnologie, Programmierung und modernen Tools bis hin zu Elektronik, persönlichen Projekten, verschiedenen Sprachen und allem, was ich als lohnenswert zum Lernen empfinde.\n\nDieser Raum dient der Sammlung von Erfahrungen, Ideen und Dingen, denen ich auf meinem Lern- und Arbeitsweg begegne – eine vielfältige Sammlung von Wissen, das vielleicht auch für Sie nützlich oder inspirierend sein könnte.",
   "resumeButton": "Lebenslauf ansehen",
@@ -11,5 +12,15 @@
   "allPosts": "Alle Beiträge",
   "backToBlog": "Zurück zum Blog",
   "mainPage": "Hauptseite",
-  "aboutButton": "Über mich"
+  "home": "Start",
+  "aboutButton": "Über mich",
+  "heroTitle": "Kourosh Torabijafroudi",
+  "heroSubtitle": "Full-Stack-Softwareentwickler",
+  "heroIntro": "Ich bin Full-Stack-Entwickler in Wien und baue moderne, benutzerzentrierte Webanwendungen mit Next.js, React, Java, C# und SQL. Hier erfahren Sie mehr über mich und finden einen Blog, in dem ich teile, was ich lerne und was mich inspiriert.",
+  "aboutCardTitle": "Über mich",
+  "aboutCardText": "Lernen Sie meinen Hintergrund, meine Fähigkeiten und meine Erfahrung kennen — von Zahlungsschnittstellen und Webplattformen bis zu Kernbankensystemen und skalierbaren Frontends.",
+  "blogCardTitle": "Blog",
+  "blogCardText": "Gelegentliche Beiträge über Software, Programmierung, Elektronik und alles andere, das es wert ist, gelernt und geteilt zu werden.",
+  "latestPosts": "Neueste Beiträge",
+  "viewAllPosts": "Alle Beiträge ansehen"
 }

@@ -1,0 +1,12 @@
+{
+  "title": "Personal Projects",
+  "intro": "A selection of projects I've built in my free time — experiments, tools, and ideas turned into working software.",
+  "projects": [
+    {
+      "title": "KMSwitch",
+      "description": "An open-hardware keyboard/mouse switch (KVM) for two computers, built on the RP2040. Switch with a hotkey or by moving the mouse across the screen edge — no host software, works in the BIOS, with a shared microSD drive and galvanic isolation.",
+      "tech": ["RP2040", "KiCad", "OpenSCAD", "USB-HID", "Python"],
+      "github": "https://github.com/KooroshTorabi/KMSwitch"
+    }
+  ]
+}
