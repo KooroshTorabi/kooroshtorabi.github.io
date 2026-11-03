@@ -1,11 +1,23 @@
-import { Inter, Vazirmatn } from "next/font/google";
+import localFont from "next/font/local";
 
-// تعریف واحد فونت‌ها برای جلوگیری از تداخل query های next/font در Turbopack
-export const VazirmatnFont = Vazirmatn({
-  subsets: ["latin", "arabic"],
-  weight: ["400", "700"],
+// فونت‌ها به‌صورت لوکال (self-hosted) بارگذاری می‌شوند تا بیلد به سرویس گوگل‌فونت
+// وابسته نباشد (رفع باگ فلیکی Turbopack با next/font/google).
+export const VazirmatnFont = localFont({
+  src: [
+    {
+      path: "../fonts/Vazirmatn-VariableFont_wght.ttf",
+      weight: "100 900",
+      style: "normal",
+    },
+  ],
 });
 
-export const InterFont = Inter({
-  subsets: ["latin"],
+export const InterFont = localFont({
+  src: [
+    {
+      path: "../fonts/Inter-VariableFont.woff2",
+      weight: "100 900",
+      style: "normal",
+    },
+  ],
 });
