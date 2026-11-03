@@ -107,7 +107,7 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
 
   return (
     <div
-      className={`min-h-screen bg-stone-900 text-amber-500 px-3 sm:px-5 py-5 pb-5 pt-5 ${pageFontClass}`}
+      className={`min-h-screen bg-transparent text-amber-500 px-3 sm:px-5 py-5 pb-5 pt-5 ${pageFontClass}`}
       dir={pageDir}
     >
       <Header currentLang={locale} />
@@ -142,7 +142,7 @@ const Blog: NextPage<BlogProps> = ({ posts }) => {
                 href={`/blog/${slug}`}
                 locale={locale}
                 // 💡 اصلاح: طرح‌بندی عمودی در موبایل
-                className="block bg-stone-800 p-4 sm:p-6 rounded-xl shadow-lg hover:bg-stone-700 transition-all"
+                className="block bg-stone-800 p-4 sm:p-6 rounded-xl shadow-[0_0_30px_rgba(251,191,36,0.18)] ring-1 ring-amber-300/10 hover:bg-stone-700 transition-all"
                 dir={postDir}
               >
                 {/* 🔑 اعمال md:flex-row برای اطمینان از stacking در موبایل */}

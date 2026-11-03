@@ -27,6 +27,29 @@
   }
 }
 
+/* پس‌زمینه پلاسمای چندرنگِ ملایم و تیره */
+body {
+  background-color: #1c1917;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(109, 40, 217, 0.22), transparent 45%),
+    radial-gradient(circle at 85% 25%, rgba(37, 99, 235, 0.18), transparent 48%),
+    radial-gradient(circle at 55% 78%, rgba(13, 148, 136, 0.16), transparent 45%),
+    radial-gradient(circle at 22% 88%, rgba(190, 24, 93, 0.14), transparent 42%),
+    radial-gradient(circle at 88% 72%, rgba(245, 158, 11, 0.07), transparent 40%);
+  background-size: 160% 160%;
+  background-attachment: fixed;
+  animation: plasma-drift 32s ease-in-out infinite alternate;
+}
+
+@keyframes plasma-drift {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
 /* .pixelify-sans-regular {
   font-family: var(--font-pixelify-regular);
   font-optical-sizing: auto;

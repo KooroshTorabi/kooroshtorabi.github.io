@@ -84,7 +84,7 @@ export default function BlogLanguageSwitcher({ currentLang, onChange }: Props) {
 
       {/* منوی دراپ‌داون */}
       {isOpen && (
-        <div className="origin-top-right absolute right-0 mt-1 w-32 rounded-md p-1 shadow-lg bg-amber-800 ring-1 ring-amber-600 ring-opacity-5 divide-y divide-amber-700 focus:outline-none">
+        <div className="origin-top-right absolute right-0 mt-1 w-32 rounded-md p-1 shadow-2xl bg-amber-800 ring-1 ring-amber-600 ring-opacity-5 divide-y divide-amber-700 focus:outline-none">
           <div className="py-1">
             <button
               type="button"
