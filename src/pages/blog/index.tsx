@@ -19,14 +19,9 @@ const DynamicTiltEffect = dynamic(() => import("@ui/TiltEffect"), {
 });
 
 // 🚩 ایمپورت فونت‌ها
-import { Inter, Vazirmatn } from "next/font/google";
+import { InterFont, VazirmatnFont } from "@lib/fonts";
 
 // 🚩 تعریف فونت‌ها
-const VazirmatnFont = Vazirmatn({
-  subsets: ["latin", "arabic"],
-  weight: ["400", "700"],
-});
-const InterFont = Inter({ subsets: ["latin"] });
 
 const DEFAULT_COVER_IMAGE = "/images/default-blog-cover.jpg";
 

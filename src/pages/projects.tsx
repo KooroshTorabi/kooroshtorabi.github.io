@@ -1,14 +1,8 @@
 import Header from "@ui/Header";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { Inter, Vazirmatn } from "next/font/google";
+import { InterFont, VazirmatnFont } from "@lib/fonts";
 import { useRouter } from "next/router";
-
-const VazirmatnFont = Vazirmatn({
-  subsets: ["latin", "arabic"],
-  weight: ["400", "700"],
-});
-const InterFont = Inter({ subsets: ["latin"] });
 
 type Project = {
   title: string;

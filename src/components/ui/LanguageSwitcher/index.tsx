@@ -2,18 +2,11 @@
 
 import languageOptions from "@src/lib/languageOptions";
 import { useTranslation } from "next-i18next";
-import { Inter, Vazirmatn } from "next/font/google";
+import { InterFont, VazirmatnFont } from "@lib/fonts";
 import Image from "next/image"; // 👈 مطمئن شوید که این ایمپورت را اضافه کنید
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-const VazirmatnFont = Vazirmatn({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-vazirmatn",
-});
-
-const InterFont = Inter({ subsets: ["latin"] });
 // 👈 تصحیح نام تابع
 const LanguageSwitcher = () => {
   const router = useRouter();
