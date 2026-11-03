@@ -6,7 +6,7 @@ import type { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
-import { Inter, Vazirmatn } from "next/font/google";
+import { InterFont, VazirmatnFont } from "@lib/fonts";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
@@ -16,11 +16,6 @@ const DynamicTiltEffect = dynamic(() => import("@ui/TiltEffect"), {
 });
 
 // تعریف فونت‌ها
-const VazirmatnFont = Vazirmatn({
-  subsets: ["latin", "arabic"],
-  weight: ["400", "700"],
-});
-const InterFont = Inter({ subsets: ["latin"] });
 
 // --- GetStaticProps (برای بارگذاری ترجمه) ---
 export const getStaticProps = async ({ locale }: { locale: string }) => {

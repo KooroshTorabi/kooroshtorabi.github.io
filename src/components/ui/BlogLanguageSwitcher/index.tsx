@@ -1,16 +1,9 @@
 // src/components/BlogLanguageSwitcher.tsx
 
 import languageOptions, { type LanguageOption } from "@lib/languageOptions";
-import { Inter, Vazirmatn } from "next/font/google";
+import { InterFont, VazirmatnFont } from "@lib/fonts";
 import Image from "next/image";
 import { useState } from "react";
-
-const VazirmatnFont = Vazirmatn({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-vazirmatn",
-});
-const InterFont = Inter({ subsets: ["latin"] });
 
 interface Props {
   currentLang?: string | null; // null = همه زبان‌ها

@@ -8,7 +8,7 @@ import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
-import { Inter, Vazirmatn } from "next/font/google";
+import { InterFont, VazirmatnFont } from "@lib/fonts";
 import Link from "next/link";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
@@ -26,9 +26,6 @@ const DynamicWaveEffect = dynamic(() => import("@ui/WaveEffect"), {
     <div className="w-full h-48 sm:h-80 md:h-96 bg-stone-700 animate-pulse" />
   ),
 });
-
-const VazirmatnFont = Vazirmatn({ subsets: ["latin"], weight: ["400"] });
-const InterFont = Inter({ subsets: ["latin"] });
 
 const DEFAULT_COVER_IMAGE = "/images/default-blog-cover.jpg";
 

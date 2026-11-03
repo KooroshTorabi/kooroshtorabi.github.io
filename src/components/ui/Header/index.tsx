@@ -1,11 +1,8 @@
 import languageOptions from "@lib/languageOptions";
 import LanguageSwitcher from "@ui/LanguageSwitcher";
 import { useTranslation } from "next-i18next";
-import { Inter, Vazirmatn } from "next/font/google";
+import { InterFont, VazirmatnFont } from "@lib/fonts";
 import Link from "next/link";
-
-const VazirmatnFont = Vazirmatn({ subsets: ["latin"], weight: ["400"] });
-const InterFont = Inter({ subsets: ["latin"] });
 
 interface HeaderProps {
   currentLang?: string;
