@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base href="/ina228-current-profiler/viewer/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>INA228 profiler 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE work: an engineering review of two PCB options
+   IDEA an inspection bench: the board sits on a stage, parts named as you point at them
+   PICTURE the live 3D board, large, with a parts list that highlights in place
+   COLOUR white ground, graphite ink, solder-mask green stage, ENIG gold accent
+   TYPE IBM Plex Sans + IBM Plex Mono for reference designators
+   LAYOUT title and variant switch on top; stage 2/3 + parts list 1/3; phone: stacked */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0e1211);--ink:light-dark(#16191a,#e8ecea);--mute:light-dark(#5b6461,#9aa5a1);--line:light-dark(#dfe4e2,#27302d);--stage:light-dark(#e7ecea,#18201d);--panel:light-dark(#f5f7f6,#141a18);--gold:#b8892a;--goldbg:light-dark(#f6ecd6,#2e2614);--green:#1f6b45}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 "IBM Plex Sans",system-ui,sans-serif;overflow-x:clip}
+.wrap{max-width:1240px;margin:0 auto;padding:clamp(20px,3vw,36px) max(4vw,16px)}
+header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px 24px;margin-bottom:18px}
+h1{font-size:clamp(30px,4vw,42px);line-height:1.05;letter-spacing:-.02em;margin:0 0 6px;font-weight:600;text-wrap:balance}
+.lede{margin:0;color:var(--mute);max-width:60ch}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;padding:4px;background:var(--panel);gap:4px;flex-wrap:wrap}
+.seg button{font:inherit;font-weight:500;border:0;background:none;color:var(--ink);padding:0 16px;min-height:44px;border-radius:7px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.seg button:focus-visible,.views button:focus-visible,.parts li:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.bench{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:18px;align-items:stretch}
+.stage{position:relative;background:var(--stage);border-radius:14px;overflow:hidden;min-height:clamp(380px,64vh,660px)}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+.stage canvas:active{cursor:grabbing}
+.views{position:absolute;left:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;right:12px}
+.views button{font:inherit;font-size:14px;font-weight:500;min-height:40px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.views button[aria-pressed=true]{border-color:var(--gold);background:var(--goldbg)}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:14px;padding:6px 10px;border-radius:7px;white-space:nowrap;transform:translate(-50%,calc(-100% - 12px));opacity:0;transition:opacity .12s}
+.tip b{font-family:"IBM Plex Mono",monospace;font-weight:500;margin-right:6px}
+.status{position:absolute;inset:0;display:grid;place-items:center;color:var(--mute);font-size:15px;text-align:center;padding:20px}
+.dims{position:absolute;right:14px;top:12px;font-size:14px;color:var(--mute);background:color-mix(in srgb,var(--stage) 80%,transparent);padding:2px 8px;border-radius:6px}
+aside{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 16px 10px;display:flex;flex-direction:column;max-height:clamp(380px,64vh,660px)}
+aside h2{font-size:17px;margin:0 0 2px;font-weight:600}
+aside p{margin:0 0 10px;color:var(--mute);font-size:14px}
+.parts{list-style:none;margin:0;padding:0;overflow-y:auto;flex:1}
+.parts li{display:grid;grid-template-columns:3.2em minmax(0,1fr);gap:2px 10px;padding:8px 8px;border-radius:8px;cursor:pointer;border-bottom:1px solid var(--line)}
+.parts li:last-child{border-bottom:0}
+.parts li.on{background:var(--goldbg)}
+.parts .ref{font-family:"IBM Plex Mono",monospace;font-weight:500;grid-row:span 2;align-self:center}
+.parts .val{font-size:14px;font-weight:500}
+.parts .role{font-size:13px;color:var(--mute)}
+.toggle{display:flex;align-items:center;gap:10px;min-height:44px;font-size:15px;cursor:pointer;border-top:1px solid var(--line);margin-top:6px}
+.toggle input{width:20px;height:20px;accent-color:var(--gold)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(11em,1fr));gap:0;border-top:1px solid var(--line);margin-top:18px}
+.facts div{padding:14px 16px 4px 0}
+.facts dt{font-size:14px;color:var(--mute)}
+.facts dd{margin:0;font-size:17px;font-weight:500}
+.note{font-size:14px;color:var(--mute);margin-top:14px}
+@media(max-width:900px){.bench{grid-template-columns:minmax(0,1fr)}aside{max-height:none}.parts{max-height:420px}}
+@media(max-width:600px){.stage{min-height:360px}.dims{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>INA228 current profiler in 3D</h1>
+      <p class="lede" id="lede">Drag to turn the board, scroll or pinch to zoom, point at a part to name it.</p>
+    </div>
+    <div class="seg" role="group" aria-label="Board variant">
+      <button id="v-integrated" aria-pressed="true">Integrated INA228</button>
+      <button id="v-module" aria-pressed="false">Module adapter</button>
+    </div>
+  </header>
+
+  <div class="bench">
+    <div class="stage" id="stage">
+      <canvas id="cv" aria-label="3D model of the selected board"></canvas>
+      <div class="status" id="status">Loading the 3D model…</div>
+      <div class="dims">62 × 49 mm · 1.6 mm FR4</div>
+      <div class="tip" id="tip"></div>
+      <div class="views" role="group" aria-label="Camera view">
+        <button data-view="iso" aria-pressed="true">Angled</button>
+        <button data-view="top" aria-pressed="false">Top</button>
+        <button data-view="front" aria-pressed="false">Edge</button>
+        <button data-view="bottom" aria-pressed="false">Bottom</button>
+      </div>
+    </div>
+    <aside>
+      <h2 id="ptitle">Parts on this board</h2>
+      <p id="psub">Hover a row to find it on the board.</p>
+      <ul class="parts" id="parts"></ul>
+      <label class="toggle"><input type="checkbox" id="showParts" checked> Show components</label>
+    </aside>
+  </div>
+
+  <dl class="facts" id="facts"></dl>
+  <p class="note">3D models from the KiCad library; copper, mask and silkscreen are the real board layers. Source: <a href="https://github.com/KooroshTorabi/ina228-current-profiler">github.com/KooroshTorabi/ina228-current-profiler</a></p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+{
+const VARIANTS = {
+  integrated: {
+    file: "current_meter.glb",
+    lede: "INA228 on the board. Shunts, range FETs and the monitor share one Kelvin layout; a logger MCU talks I2C on J3.",
+    facts: [["Range", "nA to 2.5 A, 3 ranges"], ["Sense", "INA228 on board, Kelvin traces"], ["Logger header", "3V3 GND SDA SCL ALERT CTL_H CTL_M"], ["Parts", "22 + 4 mounting holes"]],
+    parts: [["C1","22u X5R 25V"],["C2","100n"],["D1","BAS416"],["D2","BAS416"],["J1","VIN_IN"],["J2","DUT_OUT"],["J3","LOGGER"],["Q1","DMP2008USS"],["Q2","DMP2035U-7"],["Q3","2N7002"],["Q4","2N7002"],["R1","50m 1% 1W"],["R2","1R 0.1%"],["R3","1k 0.1% 25ppm"],["R4","100k"],["R5","100k"],["R6","100k"],["R7","100k"],["R8","10k"],["R9","4.7k"],["R10","4.7k"],["U1","INA228AIDGSR"]]
+  },
+  module: {
+    file: "current_adapter.glb",
+    lede: "Shunts and range FETs only. J4 carries Kelvin sense lines to an off-the-shelf INA228 breakout with its own shunt disabled.",
+    facts: [["Range", "nA to 2.5 A, 3 ranges"], ["Sense", "J4 to SparkFun or Adafruit INA228"], ["Logger header", "3V3 GND CTL_H CTL_M"], ["Parts", "18 + 4 mounting holes"]],
+    parts: [["C1","22u X5R 25V"],["D1","BAS416"],["D2","BAS416"],["J1","VIN_IN"],["J2","DUT_OUT"],["J3","LOGGER"],["J4","SENSE"],["Q1","DMP2008USS"],["Q2","DMP2035U-7"],["Q3","2N7002"],["Q4","2N7002"],["R1","50m 1% 1W"],["R2","1R 0.1%"],["R3","1k 0.1% 25ppm"],["R4","100k"],["R5","100k"],["R6","100k"],["R7","100k"]]
+  }
+};
+const ROLE = {
+  R1: "High-range shunt", R2: "Mid-range shunt", R3: "Low-range shunt (nA, µA)",
+  D1: "Clamp across R2 on wake-up", D2: "Clamp across R3 on wake-up",
+  Q1: "Bypasses R2 + R3 for high range", Q2: "Bypasses R3 for mid range",
+  Q3: "Gate driver for Q1", Q4: "Gate driver for Q2",
+  R4: "Q1 gate pull-up, tapped before the shunt", R5: "Q2 gate pull-up, tapped before the shunt",
+  R6: "Holds CTL_H high at reset", R7: "Holds CTL_M high at reset",
+  C1: "Reservoir for the DUT's wake-up current", J1: "Supply in, screw terminal", J2: "To the DUT, screw terminal",
+  J3: "Logger MCU header", J4: "Kelvin sense out: S+, S−, GND", U1: "20-bit power monitor, I2C 0x40",
+  C2: "U1 supply decoupling", R8: "ALERT pull-up", R9: "SDA pull-up", R10: "SCL pull-up"
+};
+const VIEWS = { iso: [0.75, 1.05, 1.2], top: [0, 1.9, 0.0001], front: [0, 0.32, 1.75], bottom: [0, -1.9, 0.0001] };
+
+const $ = (id) => document.getElementById(id);
+const stage = $("stage"), cv = $("cv"), tip = $("tip"), statusEl = $("status");
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let renderer, scene, camera, controls, current = null, cache = {}, partNodes = {}, hovered = null, listHover = null, view = "iso";
+
+function initGL() {
+  renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(32, 1, 1, 2000);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x404848, 0.85));
+  const key = new THREE.DirectionalLight(0xffffff, 0.9); key.position.set(60, 120, 80); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.35); rim.position.set(-80, -40, -60); scene.add(rim);
+  controls = new THREE.OrbitControls(camera, cv);
+  controls.enableDamping = true; controls.dampingFactor = 0.08;
+  controls.minDistance = 25; controls.maxDistance = 400;
+  controls.autoRotate = !reduce; controls.autoRotateSpeed = 0.7;
+  controls.addEventListener("start", () => { controls.autoRotate = false; });
+  const ro = new ResizeObserver(resize); ro.observe(stage);
+  resize();
+  loop();
+}
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+function loop() { requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera); }
+
+function setView(name, animate) {
+  view = name;
+  document.querySelectorAll(".views button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.view === name)));
+  const d = 62 * (camera.aspect < 1 ? 1.45 : 1);
+  const target = new THREE.Vector3(...VIEWS[name]).multiplyScalar(d);
+  controls.target.set(0, 0, 0);
+  if (!animate || reduce) { camera.position.copy(target); return; }
+  const from = camera.position.clone(); let t = 0;
+  const step = () => { t = Math.min(1, t + 0.06); const e = 1 - (1 - t) ** 3; camera.position.lerpVectors(from, target, e); if (t < 1) requestAnimationFrame(step); };
+  step();
+}
+
+function prepare(gltf) {
+  const root = gltf.scene;
+  root.rotation.x = -Math.PI / 2; root.scale.setScalar(1000);
+  const wrapper = new THREE.Group(); wrapper.add(root);
+  wrapper.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(wrapper);
+  const c = box.getCenter(new THREE.Vector3());
+  root.position.sub(c);
+  const parts = {};
+  root.traverse((o) => {
+    if (/^[A-Z]{1,2}\d{1,2}$/.test(o.name) && !parts[o.name]) parts[o.name] = o;
+    if (o.isMesh) { o.material = o.material.clone(); o.material.emissive = new THREE.Color(0); }
+  });
+  return { group: wrapper, parts };
+}
+
+function partOf(obj) { while (obj) { if (/^[A-Z]{1,2}\d{1,2}$/.test(obj.name)) return obj.name; obj = obj.parent; } return null; }
+function glow(ref, on) {
+  const n = partNodes[ref]; if (!n) return;
+  n.traverse((o) => { if (o.isMesh) o.material.emissive.setHex(on ? 0x6a4a08 : 0x000000); });
+  const li = document.querySelector(`.parts li[data-ref="${ref}"]`); if (li) li.classList.toggle("on", on);
+}
+
+function renderList(v) {
+  $("parts").innerHTML = VARIANTS[v].parts.map(([r, val]) =>
+    `<li tabindex="0" data-ref="${r}"><span class="ref">${r}</span><span class="val">${val}</span><span class="role">${ROLE[r] || ""}</span></li>`).join("");
+  $("facts").innerHTML = VARIANTS[v].facts.map(([k, val]) => `<div><dt>${k}</dt><dd>${val}</dd></div>`).join("");
+  $("lede").textContent = VARIANTS[v].lede;
+  $("psub").textContent = `${VARIANTS[v].parts.length} parts. Hover a row to find it on the board.`;
+}
+
+function show(v) {
+  ["integrated", "module"].forEach((k) => $("v-" + k).setAttribute("aria-pressed", String(k === v)));
+  renderList(v);
+  if (current) scene.remove(current.group);
+  const use = (entry) => {
+    current = entry; partNodes = entry.parts; scene.add(entry.group);
+    setParts($("showParts").checked); statusEl.style.display = "none";
+  };
+  if (cache[v]) { use(cache[v]); return; }
+  statusEl.style.display = "grid"; statusEl.textContent = "Loading the 3D model…";
+  new THREE.GLTFLoader().load(VARIANTS[v].file, (g) => { cache[v] = prepare(g); use(cache[v]); },
+    undefined, () => { statusEl.textContent = "The 3D model could not be loaded in this browser."; });
+}
+function setParts(on) { Object.values(partNodes).forEach((n) => { n.visible = on; }); }
+
+const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
+cv.addEventListener("pointermove", (e) => {
+  if (!current) return;
+  const r = cv.getBoundingClientRect();
+  ptr.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ptr, camera);
+  const hit = ray.intersectObject(current.group, true).find((h) => h.object.visible && partOf(h.object) && partNodes[partOf(h.object)].visible);
+  const ref = hit ? partOf(hit.object) : null;
+  if (ref !== hovered) { if (hovered && hovered !== listHover) glow(hovered, false); hovered = ref; if (ref) glow(ref, true); }
+  if (ref) {
+    const p = VARIANTS[currentVariant()].parts.find((x) => x[0] === ref);
+    tip.innerHTML = `<b>${ref}</b>${p ? p[1] : ""}`; tip.title = ROLE[ref] || "";
+    tip.style.left = (e.clientX - r.left) + "px"; tip.style.top = (e.clientY - r.top) + "px"; tip.style.opacity = 1;
+  } else tip.style.opacity = 0;
+});
+cv.addEventListener("pointerleave", () => { if (hovered && hovered !== listHover) glow(hovered, false); hovered = null; tip.style.opacity = 0; });
+function currentVariant() { return $("v-module").getAttribute("aria-pressed") === "true" ? "module" : "integrated"; }
+
+const list = $("parts");
+const enter = (e) => { const li = e.target.closest("li"); if (!li) return; if (listHover) glow(listHover, false); listHover = li.dataset.ref; glow(listHover, true); controls.autoRotate = false; };
+const leave = (e) => { const li = e.target.closest("li"); if (!li) return; glow(li.dataset.ref, false); listHover = null; };
+list.addEventListener("mouseover", enter); list.addEventListener("mouseout", leave);
+list.addEventListener("focusin", enter); list.addEventListener("focusout", leave);
+$("v-integrated").addEventListener("click", () => show("integrated"));
+$("v-module").addEventListener("click", () => show("module"));
+$("showParts").addEventListener("change", (e) => setParts(e.target.checked));
+document.querySelectorAll(".views button").forEach((b) => b.addEventListener("click", () => { controls.autoRotate = false; setView(b.dataset.view, true); }));
+
+if (!window.THREE || !THREE.GLTFLoader || !THREE.OrbitControls) {
+  statusEl.textContent = "The 3D viewer library did not load.";
+} else {
+  initGL(); setView("iso", false); show("integrated");
+}
+}
+</script>
+</body>
+</html>

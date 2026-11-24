@@ -4,6 +4,17 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  // 3D viewer of the INA228 current profiler (static files in public/)
+  async redirects() {
+    return [
+      {
+        source: "/:locale(en|fa|de)?/ina228-current-profiler{/viewer}?",
+        destination: "/ina228-current-profiler/viewer/index.html",
+        permanent: false,
+        locale: false,
+      },
+    ];
+  },
   i18n: {
     locales: ["en", "fa", "de"],
     defaultLocale: "en",

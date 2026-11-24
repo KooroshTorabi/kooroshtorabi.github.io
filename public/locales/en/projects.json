@@ -3,9 +3,29 @@
   "intro": "A selection of projects I've built in my free time — experiments, tools, and ideas turned into working software.",
   "projects": [
     {
+      "title": "INA228 Current Profiler",
+      "description": "An auto-ranging current and power meter for measuring embedded devices such as an STM32 from deep sleep to full load: nanoamps up to 2.5 A. A 20-bit INA228 with three switched shunts (1 kΩ / 1 Ω / 50 mΩ) logs voltage and current to a second microcontroller. Open hardware with a KiCad schematic and PCB, plus an interactive 3D view.",
+      "tech": [
+        "INA228",
+        "KiCad",
+        "STM32",
+        "Raspberry Pi",
+        "Python",
+        "three.js"
+      ],
+      "github": "https://github.com/KooroshTorabi/ina228-current-profiler",
+      "demo": "/ina228-current-profiler/viewer/index.html"
+    },
+    {
       "title": "KMSwitch",
       "description": "An open-hardware keyboard/mouse switch (KVM) for two computers, built on the RP2040. Switch with a hotkey or by moving the mouse across the screen edge — no host software, works in the BIOS, with a shared microSD drive and galvanic isolation.",
-      "tech": ["RP2040", "KiCad", "OpenSCAD", "USB-HID", "Python"],
+      "tech": [
+        "RP2040",
+        "KiCad",
+        "OpenSCAD",
+        "USB-HID",
+        "Python"
+      ],
       "github": "https://github.com/KooroshTorabi/KMSwitch"
     }
   ]

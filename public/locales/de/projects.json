@@ -3,9 +3,29 @@
   "intro": "Eine Auswahl von Projekten, die ich in meiner Freizeit gebaut habe — Experimente, Werkzeuge und Ideen, die zu funktionierender Software geworden sind.",
   "projects": [
     {
+      "title": "INA228 Current Profiler",
+      "description": "Ein Strom- und Leistungsmesser mit automatischer Bereichsumschaltung, um eingebettete Geräte wie einen STM32 vom Deep Sleep bis zur Volllast zu messen: von Nanoampere bis 2,5 A. Ein 20-Bit-INA228 mit drei umschaltbaren Shunts (1 kΩ / 1 Ω / 50 mΩ) protokolliert Spannung und Strom an einen zweiten Mikrocontroller. Open Hardware mit KiCad-Schaltplan und -Platine sowie interaktiver 3D-Ansicht.",
+      "tech": [
+        "INA228",
+        "KiCad",
+        "STM32",
+        "Raspberry Pi",
+        "Python",
+        "three.js"
+      ],
+      "github": "https://github.com/KooroshTorabi/ina228-current-profiler",
+      "demo": "/ina228-current-profiler/viewer/index.html"
+    },
+    {
       "title": "KMSwitch",
       "description": "Ein quelloffener Hardware-Umschalter für Tastatur/Maus (KVM) für zwei Computer, basierend auf dem RP2040. Umschalten per Hotkey oder durch Bewegen der Maus über den Bildschirmrand — keine Host-Software, funktioniert im BIOS, mit gemeinsamem microSD-Laufwerk und galvanischer Trennung.",
-      "tech": ["RP2040", "KiCad", "OpenSCAD", "USB-HID", "Python"],
+      "tech": [
+        "RP2040",
+        "KiCad",
+        "OpenSCAD",
+        "USB-HID",
+        "Python"
+      ],
       "github": "https://github.com/KooroshTorabi/KMSwitch"
     }
   ]
