@@ -89,6 +89,7 @@ aside p{margin:0 0 10px;color:var(--mute);font-size:14px}
       <button id="v-integrated" aria-pressed="true">Integrated INA228</button>
       <button id="v-module" aria-pressed="false">Module adapter</button>
       <button id="v-smart" aria-pressed="false">Smart (rev C)</button>
+      <button id="v-usb" aria-pressed="false">USB-C meter (rev D)</button>
     </div>
   </header>
 
@@ -114,7 +115,7 @@ aside p{margin:0 0 10px;color:var(--mute);font-size:14px}
   </div>
 
   <dl class="facts" id="facts"></dl>
-  <p class="note">3D models from the KiCad library; copper, mask and silkscreen are the real board layers. Open hardware, MIT licence.</p>
+  <p class="note">3D models from the KiCad library (rev D's USB-C connectors are simplified bodies); copper, mask and silkscreen are the real board layers. Open hardware, MIT licence.</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -142,6 +143,12 @@ VARIANTS.smart = {
     facts: [["Range", "nA to 2.5 A, ranging on board"], ["Output", "I2C 0x48 or CSV at 921600 baud"], ["Host header", "3V3 GND SDA SCL TX RX"], ["Parts", "37 + SWD header + 4 holes"]],
     parts: [["C1", "22u X5R 25V"], ["C2", "100n"], ["C3", "100n"], ["C4", "4.7u"], ["C5", "100n"], ["C6", "100n"], ["C7", "100n"], ["D1", "BAS416"], ["D2", "BAS416"], ["D3", "LED red"], ["J1", "VIN_IN"], ["J2", "DUT_OUT"], ["J3", "HOST"], ["Q1", "DMP2008USS"], ["Q2", "DMP2035U-7"], ["Q3", "2N7002"], ["Q4", "2N7002"], ["Q5", "MMBT3904"], ["R1", "50m 1% 1W"], ["R2", "1R 0.1%"], ["R3", "1k 0.1% 25ppm"], ["R4", "100k"], ["R5", "100k"], ["R6", "100k"], ["R7", "100k"], ["R8", "10k"], ["R9", "4.7k"], ["R10", "4.7k"], ["R11", "1k"], ["R12", "33k"], ["R13", "100k"], ["R14", "100k"], ["R15", "10k"], ["R16", "1k"], ["U1", "INA228AIDGSR"], ["U2", "STM32G030F6P6"], ["U3", "TLV7021DBVR"]]
 };
+VARIANTS.usb = {
+    file: "current_usb.glb",
+    lede: "In-line USB-C power meter: plug into the charger, the device's cable into the receptacle, and a second USB-C port to the PC. All data goes to the computer.",
+    facts: [["Range", "4–48 V (PD 3.1 EPR), up to 5 A, auto-ranging"], ["Resolution", "7.8 µA below 3.8 A, 31 µA above"], ["Lines read", "CC1, CC2, D+, D− (PD/QC/Apple)"], ["PC link", "USB-C, CDC serial, DFU update"]],
+    parts: [["C1", "100n"], ["C2", "100n"], ["C3", "100n"], ["C4", "4.7u"], ["C5", "100n"], ["C6", "4.7u"], ["C8", "100n"], ["C9", "100n"], ["C10", "100n"], ["C11", "100n"], ["D1", "SMBJ51A"], ["D2", "LED red"], ["J1", "USB-C plug (IN)"], ["J2", "USB-C receptacle (OUT)"], ["J3", "USB-C receptacle (PC)"], ["J4", "SWD"], ["R1", "10m 1% 2W"], ["R2", "10k"], ["R3", "4.7k"], ["R4", "4.7k"], ["R5", "5.1k"], ["R6", "5.1k"], ["R7", "1M"], ["R8", "1M"], ["R9", "1M"], ["R10", "1M"], ["R11", "1M"], ["R12", "1M"], ["R13", "1M"], ["R14", "1M"], ["R15", "1k"], ["U1", "INA228AIDGSR"], ["U2", "STM32G0B1CBT6"], ["U3", "XC6206P332MR"], ["U4", "USBLC6-2SC6"]]
+};
 const ROLE = {
   R1: "High-range shunt", R2: "Mid-range shunt", R3: "Low-range shunt (nA, µA)",
   D1: "Clamp across R2 on wake-up", D2: "Clamp across R3 on wake-up",
@@ -160,6 +167,18 @@ const ROLE_SMART = {
   C6: "Base divider filter", C5: "U3 decoupling on VIN", R15: "Comparator output pull-up",
   C3: "U2 decoupling", C4: "3V3 bulk capacitor", C7: "Reset filter", R16: "LED resistor", D3: "Status LED",
   R9: "SDA pull-up, private bus to U1", R10: "SCL pull-up, private bus to U1"
+};
+const ROLE_USB = {
+  J1: "USB-C plug: goes into the charger", J2: "USB-C receptacle: the device's cable", J3: "USB-C to the PC (meter power + data)",
+  J4: "Optional SWD header, not assembled", R1: "10 mΩ shunt, Kelvin taps to U1", D1: "51 V TVS on the input bus",
+  U1: "INA228: current and bus voltage, I2C 0x40", U2: "STM32G0B1: USB CDC, ranging, CC/D± ADC",
+  U3: "3.3 V LDO from the PC's 5 V", U4: "ESD protection on the PC port",
+  C1: "U1 decoupling", C2: "U2 decoupling", C3: "U2 VBAT / VREF+ decoupling", C4: "3V3 bulk", C5: "Reset filter", C6: "LDO input",
+  R2: "ALERT pull-up", R3: "SDA pull-up", R4: "SCL pull-up", R5: "Rd on CC1: the PC sees a device", R6: "Rd on CC2",
+  R7: "CC1 monitor, top", R8: "CC1 monitor, bottom", R9: "CC2 monitor, top", R10: "CC2 monitor, bottom",
+  R11: "D+ monitor, top", R12: "D+ monitor, bottom", R13: "D− monitor, top", R14: "D− monitor, bottom",
+  C8: "CC1 monitor filter", C9: "CC2 monitor filter", C10: "D+ monitor filter", C11: "D− monitor filter",
+  R15: "LED resistor", D2: "Status LED"
 };
 const VIEWS = { iso: [0.75, 1.05, 1.2], top: [0, 1.9, 0.0001], front: [0, 0.32, 1.75], bottom: [0, -1.9, 0.0001] };
 
@@ -232,12 +251,12 @@ function renderList(v) {
     `<li tabindex="0" data-ref="${r}"><span class="ref">${r}</span><span class="val">${val}</span><span class="role">${role(r)}</span></li>`).join("");
   $("facts").innerHTML = VARIANTS[v].facts.map(([k, val]) => `<div><dt>${k}</dt><dd>${val}</dd></div>`).join("");
   $("lede").textContent = VARIANTS[v].lede;
-  $("dims").textContent = (v === "smart" ? "62 × 62 mm" : "62 × 49 mm") + " · 1.6 mm FR4";
+  $("dims").textContent = { smart: "62 × 62 mm · 1.6 mm FR4", usb: "56 × 32 mm + plug paddle" }[v] || "62 × 49 mm · 1.6 mm FR4";
   $("psub").textContent = `${VARIANTS[v].parts.length} parts. Hover a row to find it on the board.`;
 }
 
 function show(v) {
-  ["integrated", "module", "smart"].forEach((k) => $("v-" + k).setAttribute("aria-pressed", String(k === v)));
+  ["integrated", "module", "smart", "usb"].forEach((k) => $("v-" + k).setAttribute("aria-pressed", String(k === v)));
   renderList(v);
   try { history.replaceState(null, "", "?v=" + v); } catch (e) {}
   if (current) scene.remove(current.group);
@@ -268,8 +287,12 @@ cv.addEventListener("pointermove", (e) => {
   } else tip.style.opacity = 0;
 });
 cv.addEventListener("pointerleave", () => { if (hovered && hovered !== listHover) glow(hovered, false); hovered = null; tip.style.opacity = 0; });
-function currentVariant() { return ["module", "smart"].find((k) => $("v-" + k).getAttribute("aria-pressed") === "true") || "integrated"; }
-function role(r) { return (currentVariant() === "smart" && ROLE_SMART[r]) || ROLE[r] || ""; }
+function currentVariant() { return ["module", "smart", "usb"].find((k) => $("v-" + k).getAttribute("aria-pressed") === "true") || "integrated"; }
+function role(r) {
+  const v = currentVariant();
+  if (v === "usb") return ROLE_USB[r] || "";
+  return (v === "smart" && ROLE_SMART[r]) || ROLE[r] || "";
+}
 
 const list = $("parts");
 const enter = (e) => { const li = e.target.closest("li"); if (!li) return; if (listHover) glow(listHover, false); listHover = li.dataset.ref; glow(listHover, true); controls.autoRotate = false; };
@@ -279,6 +302,7 @@ list.addEventListener("focusin", enter); list.addEventListener("focusout", leave
 $("v-integrated").addEventListener("click", () => show("integrated"));
 $("v-module").addEventListener("click", () => show("module"));
 $("v-smart").addEventListener("click", () => show("smart"));
+$("v-usb").addEventListener("click", () => show("usb"));
 $("showParts").addEventListener("change", (e) => setParts(e.target.checked));
 document.querySelectorAll(".views button").forEach((b) => b.addEventListener("click", () => { controls.autoRotate = false; setView(b.dataset.view, true); }));
 

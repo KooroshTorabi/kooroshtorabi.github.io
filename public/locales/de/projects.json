@@ -4,7 +4,7 @@
   "projects": [
     {
       "title": "INA228 Current Profiler",
-      "description": "Ein günstiger, unkomplizierter Strom- und Leistungsmesser für eingebettete Geräte wie einen STM32, vom Deep Sleep bis zur Volllast: von Nanoampere bis 2,5 A. Ein 20-Bit-INA228 mit drei umschaltbaren Shunts deckt neun Dekaden ab; die Smart-Version schaltet die Bereiche selbst um (ein Komparator schaltet in etwa 1 µs hoch) und liefert einen einzigen Wert über I2C oder USB-Seriell, dazu exakte Ladung und Energie. Open Hardware mit KiCad-Dateien, Firmware und interaktiver 3D-Ansicht.",
+      "description": "Ein günstiger, unkomplizierter Strom- und Leistungsmesser für eingebettete Geräte wie einen STM32, vom Deep Sleep bis zur Volllast: von Nanoampere bis 2,5 A. Ein 20-Bit-INA228 mit drei umschaltbaren Shunts deckt neun Dekaden ab; die Smart-Version schaltet die Bereiche selbst um (ein Komparator schaltet in etwa 1 µs hoch) und liefert einen einzigen Wert über I2C oder USB-Seriell, dazu exakte Ladung und Energie. Rev D ist ein USB-C-Leistungsmesser zum Zwischenstecken für Ladegeräte und Smartphones: 4–48 V (USB PD 3.1), bis 5 A, mit Auswertung der CC- und D±-Leitungen, alle Daten per USB an den PC. Open Hardware mit KiCad-Dateien, Firmware und interaktiver 3D-Ansicht.",
       "tech": [
         "INA228",
         "STM32G030",

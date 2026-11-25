@@ -4,7 +4,7 @@
   "projects": [
     {
       "title": "INA228 Current Profiler",
-      "description": "A low-cost, hassle-free current and power meter for embedded devices such as an STM32, from deep sleep to full load: nanoamps up to 2.5 A. A 20-bit INA228 with three switched shunts covers nine decades; the smart version switches the ranges on board (a comparator steps up in about 1 µs) and gives you one number over I2C or USB-serial, plus exact charge and energy. Open hardware with KiCad files, firmware and an interactive 3D view.",
+      "description": "A low-cost, hassle-free current and power meter for embedded devices such as an STM32, from deep sleep to full load: nanoamps up to 2.5 A. A 20-bit INA228 with three switched shunts covers nine decades; the smart version switches the ranges on board (a comparator steps up in about 1 µs) and gives you one number over I2C or USB-serial, plus exact charge and energy. Rev D is an in-line USB-C power meter for chargers and phones: 4–48 V (USB PD 3.1), up to 5 A, CC/D± line readings, all sent to the PC over USB. Open hardware with KiCad files, firmware and an interactive 3D view.",
       "tech": [
         "INA228",
         "STM32G030",
