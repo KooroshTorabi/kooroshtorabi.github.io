@@ -51,6 +51,13 @@ aside p{margin:0 0 10px;color:var(--mute);font-size:14px}
 .parts .role{font-size:13px;color:var(--mute)}
 .toggle{display:flex;align-items:center;gap:10px;min-height:44px;font-size:15px;cursor:pointer;border-top:1px solid var(--line);margin-top:6px}
 .toggle input{width:20px;height:20px;accent-color:var(--gold)}
+.topbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;padding-bottom:14px;margin-bottom:18px;border-bottom:1px solid var(--line)}
+.brand{font-weight:600;font-size:15px;letter-spacing:.01em}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.links a{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border:1px solid var(--line);border-radius:8px;color:var(--ink);text-decoration:none;font-size:14px;font-weight:500;background:var(--panel)}
+.links a:hover{border-color:var(--gold);background:var(--goldbg)}
+.links a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.links svg{width:18px;height:18px;flex:none}
 .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(11em,1fr));gap:0;border-top:1px solid var(--line);margin-top:18px}
 .facts div{padding:14px 16px 4px 0}
 .facts dt{font-size:14px;color:var(--mute)}
@@ -62,6 +69,17 @@ aside p{margin:0 0 10px;color:var(--mute);font-size:14px}
 </head>
 <body>
 <div class="wrap">
+  <nav class="topbar" aria-label="Project links">
+    <span class="brand">INA228 current profiler</span>
+    <div class="links">
+      <a href="https://github.com/KooroshTorabi/ina228-current-profiler" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub</a>
+      <a href="https://kourosh.site/projects" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg>
+        kourosh.site</a>
+    </div>
+  </nav>
   <header>
     <div>
       <h1>INA228 current profiler in 3D</h1>
@@ -70,6 +88,7 @@ aside p{margin:0 0 10px;color:var(--mute);font-size:14px}
     <div class="seg" role="group" aria-label="Board variant">
       <button id="v-integrated" aria-pressed="true">Integrated INA228</button>
       <button id="v-module" aria-pressed="false">Module adapter</button>
+      <button id="v-smart" aria-pressed="false">Smart (rev C)</button>
     </div>
   </header>
 
@@ -77,7 +96,7 @@ aside p{margin:0 0 10px;color:var(--mute);font-size:14px}
     <div class="stage" id="stage">
       <canvas id="cv" aria-label="3D model of the selected board"></canvas>
       <div class="status" id="status">Loading the 3D model…</div>
-      <div class="dims">62 × 49 mm · 1.6 mm FR4</div>
+      <div class="dims" id="dims">62 × 49 mm · 1.6 mm FR4</div>
       <div class="tip" id="tip"></div>
       <div class="views" role="group" aria-label="Camera view">
         <button data-view="iso" aria-pressed="true">Angled</button>
@@ -95,7 +114,7 @@ aside p{margin:0 0 10px;color:var(--mute);font-size:14px}
   </div>
 
   <dl class="facts" id="facts"></dl>
-  <p class="note">3D models from the KiCad library; copper, mask and silkscreen are the real board layers. Source: <a href="https://github.com/KooroshTorabi/ina228-current-profiler">github.com/KooroshTorabi/ina228-current-profiler</a></p>
+  <p class="note">3D models from the KiCad library; copper, mask and silkscreen are the real board layers. Open hardware, MIT licence.</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -117,6 +136,12 @@ const VARIANTS = {
     parts: [["C1","22u X5R 25V"],["D1","BAS416"],["D2","BAS416"],["J1","VIN_IN"],["J2","DUT_OUT"],["J3","LOGGER"],["J4","SENSE"],["Q1","DMP2008USS"],["Q2","DMP2035U-7"],["Q3","2N7002"],["Q4","2N7002"],["R1","50m 1% 1W"],["R2","1R 0.1%"],["R3","1k 0.1% 25ppm"],["R4","100k"],["R5","100k"],["R6","100k"],["R7","100k"]]
   }
 };
+VARIANTS.smart = {
+    file: "current_smart.glb",
+    lede: "INA228 plus an STM32G030 that switches the ranges itself. A comparator steps up in about 1 µs; the host just reads one number over I2C or UART.",
+    facts: [["Range", "nA to 2.5 A, ranging on board"], ["Output", "I2C 0x48 or CSV at 921600 baud"], ["Host header", "3V3 GND SDA SCL TX RX"], ["Parts", "37 + SWD header + 4 holes"]],
+    parts: [["C1", "22u X5R 25V"], ["C2", "100n"], ["C3", "100n"], ["C4", "4.7u"], ["C5", "100n"], ["C6", "100n"], ["C7", "100n"], ["D1", "BAS416"], ["D2", "BAS416"], ["D3", "LED red"], ["J1", "VIN_IN"], ["J2", "DUT_OUT"], ["J3", "HOST"], ["Q1", "DMP2008USS"], ["Q2", "DMP2035U-7"], ["Q3", "2N7002"], ["Q4", "2N7002"], ["Q5", "MMBT3904"], ["R1", "50m 1% 1W"], ["R2", "1R 0.1%"], ["R3", "1k 0.1% 25ppm"], ["R4", "100k"], ["R5", "100k"], ["R6", "100k"], ["R7", "100k"], ["R8", "10k"], ["R9", "4.7k"], ["R10", "4.7k"], ["R11", "1k"], ["R12", "33k"], ["R13", "100k"], ["R14", "100k"], ["R15", "10k"], ["R16", "1k"], ["U1", "INA228AIDGSR"], ["U2", "STM32G030F6P6"], ["U3", "TLV7021DBVR"]]
+};
 const ROLE = {
   R1: "High-range shunt", R2: "Mid-range shunt", R3: "Low-range shunt (nA, µA)",
   D1: "Clamp across R2 on wake-up", D2: "Clamp across R3 on wake-up",
@@ -127,6 +152,14 @@ const ROLE = {
   C1: "Reservoir for the DUT's wake-up current", J1: "Supply in, screw terminal", J2: "To the DUT, screw terminal",
   J3: "Logger MCU header", J4: "Kelvin sense out: S+, S−, GND", U1: "20-bit power monitor, I2C 0x40",
   C2: "U1 supply decoupling", R8: "ALERT pull-up", R9: "SDA pull-up", R10: "SCL pull-up"
+};
+const ROLE_SMART = {
+  J3: "Host header: 3V3 GND SDA SCL TX RX", U2: "STM32G030: does the ranging, I2C slave 0x48 + UART",
+  U3: "Comparator: trips at ~32 mV across the shunts", Q5: "~32 µA current sink for the threshold",
+  R11: "Threshold resistor, Vth = 1k × 32 µA", R12: "Sets the sink current", R13: "Base divider", R14: "Base divider",
+  C6: "Base divider filter", C5: "U3 decoupling on VIN", R15: "Comparator output pull-up",
+  C3: "U2 decoupling", C4: "3V3 bulk capacitor", C7: "Reset filter", R16: "LED resistor", D3: "Status LED",
+  R9: "SDA pull-up, private bus to U1", R10: "SCL pull-up, private bus to U1"
 };
 const VIEWS = { iso: [0.75, 1.05, 1.2], top: [0, 1.9, 0.0001], front: [0, 0.32, 1.75], bottom: [0, -1.9, 0.0001] };
 
@@ -196,15 +229,17 @@ function glow(ref, on) {
 
 function renderList(v) {
   $("parts").innerHTML = VARIANTS[v].parts.map(([r, val]) =>
-    `<li tabindex="0" data-ref="${r}"><span class="ref">${r}</span><span class="val">${val}</span><span class="role">${ROLE[r] || ""}</span></li>`).join("");
+    `<li tabindex="0" data-ref="${r}"><span class="ref">${r}</span><span class="val">${val}</span><span class="role">${role(r)}</span></li>`).join("");
   $("facts").innerHTML = VARIANTS[v].facts.map(([k, val]) => `<div><dt>${k}</dt><dd>${val}</dd></div>`).join("");
   $("lede").textContent = VARIANTS[v].lede;
+  $("dims").textContent = (v === "smart" ? "62 × 62 mm" : "62 × 49 mm") + " · 1.6 mm FR4";
   $("psub").textContent = `${VARIANTS[v].parts.length} parts. Hover a row to find it on the board.`;
 }
 
 function show(v) {
-  ["integrated", "module"].forEach((k) => $("v-" + k).setAttribute("aria-pressed", String(k === v)));
+  ["integrated", "module", "smart"].forEach((k) => $("v-" + k).setAttribute("aria-pressed", String(k === v)));
   renderList(v);
+  try { history.replaceState(null, "", "?v=" + v); } catch (e) {}
   if (current) scene.remove(current.group);
   const use = (entry) => {
     current = entry; partNodes = entry.parts; scene.add(entry.group);
@@ -228,12 +263,13 @@ cv.addEventListener("pointermove", (e) => {
   if (ref !== hovered) { if (hovered && hovered !== listHover) glow(hovered, false); hovered = ref; if (ref) glow(ref, true); }
   if (ref) {
     const p = VARIANTS[currentVariant()].parts.find((x) => x[0] === ref);
-    tip.innerHTML = `<b>${ref}</b>${p ? p[1] : ""}`; tip.title = ROLE[ref] || "";
+    tip.innerHTML = `<b>${ref}</b>${p ? p[1] : ""}`; tip.title = role(ref);
     tip.style.left = (e.clientX - r.left) + "px"; tip.style.top = (e.clientY - r.top) + "px"; tip.style.opacity = 1;
   } else tip.style.opacity = 0;
 });
 cv.addEventListener("pointerleave", () => { if (hovered && hovered !== listHover) glow(hovered, false); hovered = null; tip.style.opacity = 0; });
-function currentVariant() { return $("v-module").getAttribute("aria-pressed") === "true" ? "module" : "integrated"; }
+function currentVariant() { return ["module", "smart"].find((k) => $("v-" + k).getAttribute("aria-pressed") === "true") || "integrated"; }
+function role(r) { return (currentVariant() === "smart" && ROLE_SMART[r]) || ROLE[r] || ""; }
 
 const list = $("parts");
 const enter = (e) => { const li = e.target.closest("li"); if (!li) return; if (listHover) glow(listHover, false); listHover = li.dataset.ref; glow(listHover, true); controls.autoRotate = false; };
@@ -242,13 +278,16 @@ list.addEventListener("mouseover", enter); list.addEventListener("mouseout", lea
 list.addEventListener("focusin", enter); list.addEventListener("focusout", leave);
 $("v-integrated").addEventListener("click", () => show("integrated"));
 $("v-module").addEventListener("click", () => show("module"));
+$("v-smart").addEventListener("click", () => show("smart"));
 $("showParts").addEventListener("change", (e) => setParts(e.target.checked));
 document.querySelectorAll(".views button").forEach((b) => b.addEventListener("click", () => { controls.autoRotate = false; setView(b.dataset.view, true); }));
 
 if (!window.THREE || !THREE.GLTFLoader || !THREE.OrbitControls) {
   statusEl.textContent = "The 3D viewer library did not load.";
 } else {
-  initGL(); setView("iso", false); show("integrated");
+  initGL(); setView("iso", false);
+  const want = new URLSearchParams(location.search).get("v");
+  show(VARIANTS[want] ? want : "integrated");
 }
 }
 </script>
