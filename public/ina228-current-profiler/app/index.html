@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>USB-C power meter · live and reports</title>
+<style>
+:root{
+  --bg:#f6f5f1;--panel:#ffffff;--ink:#1d1f22;--mute:#666a70;--line:#dedbd2;--soft:#efede6;
+  --v:#2f6fdf;--i:#d9622b;--p:#2a9d6a;--gold:#b8860b;--bad:#c0392b;--ok:#2a9d6a;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#141518;--panel:#1d1f23;--ink:#ecebe6;--mute:#9a9ea6;--line:#30333a;--soft:#25282d;
+  --v:#6f9cf0;--i:#f08a55;--p:#4cc28e;--gold:#e0b24a;}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1280px;margin:0 auto;padding:18px 20px 40px}
+header{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between;margin-bottom:16px}
+h1{font-size:20px;margin:0;font-weight:650;letter-spacing:-.01em}
+h1 small{display:block;font-size:13px;font-weight:400;color:var(--mute)}
+h2{font-size:15px;margin:0 0 10px;font-weight:650}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:0 14px;min-height:38px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--mute)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.pill{font-size:13px;padding:3px 10px;border-radius:99px;background:var(--soft);color:var(--mute);white-space:nowrap}
+.pill.live{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.pill.demo{background:color-mix(in srgb,var(--gold) 20%,transparent);color:var(--gold)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}
+.read .card{padding:10px 14px}
+.read .k{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+.read .val{font:600 26px/1.15 var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.read .val small{font-size:14px;font-weight:500;color:var(--mute);margin-left:3px}
+.read .proto .val{font:600 17px/1.3 system-ui,sans-serif;white-space:normal}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.charthead{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:8px}
+.seg{display:inline-flex;gap:2px;border:1px solid var(--line);border-radius:8px;padding:2px}
+.seg button{border:0;background:none;border-radius:6px;padding:0 10px;min-height:30px;cursor:pointer;font-size:13px}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.chart{position:relative;height:430px}
+.chart canvas{width:100%;height:100%;display:block}
+.hover{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 9px;font:12px/1.4 var(--mono);opacity:0;transition:opacity .1s;white-space:nowrap;box-shadow:0 2px 10px #0002}
+.legend{display:flex;gap:14px;font-size:13px;color:var(--mute)}
+.legend i{display:inline-block;width:10px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+aside .card+.card{margin-top:12px}
+.lines{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;font-size:14px;align-items:center}
+.lines b{font:600 14px var(--mono)}
+.meterbar{height:6px;background:var(--soft);border-radius:3px;overflow:hidden}
+.meterbar span{display:block;height:100%;background:var(--v)}
+.state{margin-top:10px;font-size:14px;padding:8px 10px;background:var(--soft);border-radius:8px}
+.ctl{display:grid;grid-template-columns:1fr auto;gap:6px 8px;align-items:center;font-size:14px}
+.ctl select,.ctl input{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:5px 6px;min-width:0}
+.row{display:flex;gap:6px;margin-top:8px}
+.row input{flex:1;border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:6px 8px;font-family:var(--mono);font-size:13px;min-width:0}
+.log{margin-top:8px;height:110px;overflow:auto;font:12px/1.4 var(--mono);color:var(--mute);background:var(--soft);border-radius:6px;padding:6px 8px;white-space:pre-wrap}
+.report{margin-top:12px}
+.rephead{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:12px}
+.inputs{display:flex;flex-wrap:wrap;gap:10px}
+.inputs label{display:flex;flex-direction:column;font-size:12px;color:var(--mute);gap:3px}
+.inputs input{width:110px;border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:6px 8px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:12px}
+.kpi{background:var(--soft);border-radius:10px;padding:10px 12px}
+.kpi .k{font-size:12px;color:var(--mute)}
+.kpi .val{font:600 20px/1.25 var(--mono)}
+.kpi .sub{font-size:12px;color:var(--mute)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+th{font-weight:600;color:var(--mute);font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:800px){.cols{grid-template-columns:1fr}}
+.note{font-size:13px;color:var(--mute)}
+.verdict{font-size:15px;padding:10px 12px;border-radius:8px;background:var(--soft);margin-bottom:12px}
+.empty{color:var(--mute);font-size:14px;padding:18px 0}
+.warn{background:color-mix(in srgb,var(--bad) 12%,transparent);color:var(--bad);padding:8px 12px;border-radius:8px;font-size:14px;margin-bottom:12px;display:none}
+@media print{
+  header .bar,.grid,.read,.no-print{display:none!important}
+  body{background:#fff;color:#000}.card{border:0;padding:0}.report{margin:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>USB-C power meter<small>Live readings, charge sessions and reports for the rev D meter</small></h1>
+  <div class="bar">
+    <span class="pill" id="pill">Not connected</span>
+    <button class="btn primary" id="connect">Connect meter</button>
+    <button class="btn" id="demo">Demo session</button>
+    <label class="btn" style="display:inline-flex;align-items:center">Open CSV<input type="file" id="file" accept=".csv,.txt" hidden></label>
+    <button class="btn" id="clear">New session</button>
+  </div>
+</header>
+<div class="warn" id="warn"></div>
+
+<div class="read">
+  <div class="card"><div class="k">Voltage</div><div class="val" id="rV">–<small>V</small></div></div>
+  <div class="card"><div class="k">Current</div><div class="val" id="rI">–<small>A</small></div></div>
+  <div class="card"><div class="k">Power</div><div class="val" id="rP">–<small>W</small></div></div>
+  <div class="card"><div class="k">Charge</div><div class="val" id="rQ">–<small>mAh</small></div></div>
+  <div class="card"><div class="k">Energy</div><div class="val" id="rE">–<small>Wh</small></div></div>
+  <div class="card"><div class="k">Time</div><div class="val" id="rT">–</div></div>
+  <div class="card proto"><div class="k">Charger talks</div><div class="val" id="rProto">–</div></div>
+</div>
+
+<div class="grid">
+  <section class="card">
+    <div class="charthead">
+      <div class="legend"><span><i style="background:var(--v)"></i>Voltage</span><span><i style="background:var(--i)"></i>Current</span><span><i style="background:var(--p)"></i>Power</span></div>
+      <div class="bar">
+        <div class="seg" id="win" role="group" aria-label="Time window">
+          <button data-w="10">10 s</button><button data-w="60" aria-pressed="true">1 min</button><button data-w="600">10 min</button><button data-w="3600">1 h</button><button data-w="0">All</button>
+        </div>
+        <button class="btn" id="pause" aria-pressed="false" style="min-height:32px">Pause view</button>
+      </div>
+    </div>
+    <div class="chart" id="chart"><canvas id="cv"></canvas><div class="hover" id="hover"></div></div>
+  </section>
+
+  <aside>
+    <div class="card">
+      <h2>Lines from the charger</h2>
+      <div class="lines" id="lines"></div>
+      <div class="state" id="lstate">No data yet.</div>
+    </div>
+    <div class="card no-print">
+      <h2>Meter settings</h2>
+      <div class="ctl">
+        <label for="every">Lines per second</label>
+        <select id="every"><option value="1">~925 (full)</option><option value="10" selected>~92</option><option value="100">~9</option><option value="1000">~1</option></select>
+        <label for="ct">Conversion time</label>
+        <select id="ct"><option value="2">150 µs (fast, noisier)</option><option value="3">280 µs</option><option value="4" selected>540 µs</option><option value="5">1 ms</option><option value="6">2 ms (quiet)</option></select>
+        <label for="range">Current range</label>
+        <select id="range"><option value="auto" selected>Auto</option><option value="fine">Fine (±4 A)</option><option value="coarse">Coarse (±16 A)</option></select>
+      </div>
+      <div class="row">
+        <button class="btn" id="zero" title="Nothing plugged into the meter's output while zeroing">Zero offset</button>
+        <button class="btn" id="resetq">Reset mAh</button>
+        <button class="btn" id="save">Save</button>
+      </div>
+      <div class="row"><input id="cmd" placeholder="command, e.g. info" aria-label="Raw command"><button class="btn" id="send">Send</button></div>
+      <div class="log" id="log" aria-live="polite"></div>
+    </div>
+  </aside>
+</div>
+
+<section class="card report" id="report">
+  <div class="rephead">
+    <div>
+      <h2 style="margin:0">Session report</h2>
+      <div class="note">Charge a phone from start to finish through the meter, then analyse. Battery figures are estimates from the energy that went in.</div>
+    </div>
+    <div class="inputs no-print">
+      <label>Battery % at start<input id="pStart" type="number" min="0" max="100" placeholder="e.g. 12"></label>
+      <label>Battery % at end<input id="pEnd" type="number" min="0" max="100" placeholder="e.g. 100"></label>
+      <label>Rated capacity mAh<input id="cap" type="number" min="100" placeholder="e.g. 4500"></label>
+      <label>Cell voltage V<input id="vnom" type="number" step="0.01" value="3.87"></label>
+      <button class="btn primary" id="analyse" style="align-self:flex-end">Analyse session</button>
+    </div>
+  </div>
+  <div id="repbody"><div class="empty">No session analysed yet.</div></div>
+  <div class="bar no-print" style="margin-top:12px">
+    <button class="btn" id="csv" disabled>Download data (CSV)</button>
+    <button class="btn" id="json" disabled>Download report (JSON)</button>
+    <button class="btn" id="print" disabled>Print / PDF</button>
+  </div>
+</section>
+<p class="note">Works in Chrome, Edge and Opera on desktop (Web Serial). Data stays in this browser. Open hardware: <a href="https://github.com/KooroshTorabi/ina228-current-profiler">github.com/KooroshTorabi/ina228-current-profiler</a></p>
+</div>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const NOMINAL = [5, 9, 12, 15, 20, 28, 36, 48];
+
+/* ============================================================ session store */
+let S;
+function newSession() {
+  S = { t: [], v: [], i: [], p: [], r: [], st: [], tOff: 0, lastRaw: null, t0: null, status: null, source: null, started: new Date() };
+  report = null;
+  ["csv", "json", "print"].forEach((id) => { $(id).disabled = true; });
+  $("repbody").innerHTML = '<div class="empty">No session analysed yet.</div>';
+  dirty = true;
+}
+let report = null;
+
+function stamp(raw) {                       /* 32-bit microsecond clock -> seconds since the first line */
+  if (S.lastRaw !== null && raw < S.lastRaw - 2147483648) S.tOff += 4294967296;
+  S.lastRaw = raw;
+  const us = raw + S.tOff;
+  if (S.t0 === null) S.t0 = us;
+  return (us - S.t0) / 1e6;
+}
+
+function onLine(line) {
+  line = line.trim();
+  if (!line) return;
+  if (line.startsWith("#S,")) {
+    const f = line.split(",");
+    const st = { t: stamp(+f[1]), mah: +f[2], mwh: +f[3], secs: +f[4], cc1: +f[5], cc2: +f[6], dp: +f[7], dm: +f[8], state: f[9] || "" };
+    const dr = line.match(/dropped=(\d+)/); if (dr) st.dropped = +dr[1];
+    S.st.push(st); S.status = st; showStatus(st); return;
+  }
+  if (line.startsWith("#")) { log(line); return; }
+  const f = line.split(",");
+  if (f.length < 4 || isNaN(+f[0])) return;
+  const t = stamp(+f[0]);
+  if (S.t.length && t < S.t[S.t.length - 1]) return;
+  S.t.push(t); S.v.push(+f[1]); S.i.push(+f[2]); S.p.push(+f[3]); S.r.push(f[4] || "");
+  dirty = true;
+}
+
+/* ============================================================ live readouts */
+const fmt = (x, d) => (x === undefined || isNaN(x)) ? "–" : x.toFixed(d);
+function dur(s) {
+  s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = s % 60;
+  return h ? `${h}:${String(m).padStart(2, "0")}:${String(x).padStart(2, "0")}` : `${m}:${String(x).padStart(2, "0")}`;
+}
+function setVal(id, txt, unit) { $(id).innerHTML = txt + (unit ? `<small>${unit}</small>` : ""); }
+function refreshRead() {
+  const n = S.t.length;
+  if (n) {
+    const k = Math.max(0, n - 10);         /* short average for a calm display */
+    let v = 0, i = 0, p = 0; for (let j = k; j < n; j++) { v += S.v[j]; i += S.i[j]; p += S.p[j]; }
+    const c = n - k;
+    setVal("rV", fmt(v / c, 3), "V"); setVal("rI", fmt(i / c, Math.abs(i / c) < 1 ? 4 : 3), "A"); setVal("rP", fmt(p / c, 2), "W");
+  }
+  const st = S.status;
+  if (st) { setVal("rQ", fmt(st.mah, 1), "mAh"); setVal("rE", fmt(st.mwh / 1000, 3), "Wh"); setVal("rT", dur(st.secs)); }
+  else if (n) { const q = integrate(0, n); setVal("rQ", fmt(q.ah * 1000, 1), "mAh"); setVal("rE", fmt(q.wh, 3), "Wh"); setVal("rT", dur(S.t[n - 1])); }
+  const v = n ? S.v[n - 1] : NaN;
+  $("rProto").textContent = n || st ? protocol(st, v).name : "–";
+}
+
+function showStatus(st) {
+  const rows = [["CC1", st.cc1, 5.5], ["CC2", st.cc2, 5.5], ["D+", st.dp, 3.6], ["D−", st.dm, 3.6]];
+  $("lines").innerHTML = rows.map(([k, x, fs]) =>
+    `<span>${k}</span><div class="meterbar"><span style="width:${Math.min(100, Math.max(0, x / fs * 100))}%"></span></div><b>${fmt(x, 2)} V</b>`).join("");
+  const pr = protocol(st, S.t.length ? S.v[S.t.length - 1] : NaN);
+  $("lstate").innerHTML = `<b>${pr.name}</b><br><span class="note">${pr.why}</span>` + (st.dropped ? `<br><span class="note">${st.dropped} lines lost: the computer was too slow.</span>` : "");
+}
+
+/* What the CC and D+/D- voltages and the bus voltage say about the charging scheme.
+   Type-C current advertisement: voltage on the active CC pin with the phone's 5.1 kΩ Rd. */
+function protocol(st, v) {
+  if (!st) return { name: isNaN(v) ? "–" : nominalName(v), why: "" };
+  const cc = Math.max(st.cc1, st.cc2), other = Math.min(st.cc1, st.cc2);
+  const hiV = !isNaN(v) && v > 5.6;
+  const vconn = other > 4 ? " · e-marked cable (VCONN)" : "";
+  if (cc >= 0.2) {
+    if (hiV) return { name: `USB Power Delivery, ${nominalName(v)}`, why: "CC is connected and the bus is above 5 V: only USB PD negotiates that over Type-C." + vconn };
+    if (cc < 0.66) return { name: "USB-C, default USB power", why: `CC ≈ ${cc.toFixed(2)} V: the charger advertises default USB current (0.5–0.9 A), or PD is negotiating.` + vconn };
+    if (cc < 1.23) return { name: "USB-C 5 V 1.5 A", why: `CC ≈ ${cc.toFixed(2)} V: Type-C 1.5 A advertisement.` + vconn };
+    if (cc < 2.2) return { name: "USB-C 5 V 3 A", why: `CC ≈ ${cc.toFixed(2)} V: Type-C 3 A advertisement. PD may still be offered.` + vconn };
+    return { name: "USB-C, nothing attached", why: "CC is pulled up but no device presents Rd." };
+  }
+  const dp = st.dp, dm = st.dm;
+  if (hiV) return { name: `Quick Charge style, ${nominalName(v)}`, why: `No CC, bus above 5 V: a D+/D− scheme (QC 2.0/3.0, AFC, FCP). D+ ${dp.toFixed(2)} V, D− ${dm.toFixed(2)} V.` };
+  if (dp > 2.4 && dm > 2.4) return { name: "Apple 2.1–2.4 A", why: `D+ ${dp.toFixed(2)} V and D− ${dm.toFixed(2)} V match Apple's divider signature.` };
+  if (dp > 1.8 && dm > 1.8) return { name: "Apple 1 A / Samsung 2 A", why: `D+ ${dp.toFixed(2)} V, D− ${dm.toFixed(2)} V.` };
+  if (Math.abs(dp - dm) < 0.15 && dp > 0.3 && dp < 0.9) return { name: "BC1.2 charging port (DCP)", why: "D+ and D− are shorted: a dedicated charging port, up to 1.5 A at 5 V." };
+  if (dp > 0.4 && dp < 0.8 && dm < 0.3) return { name: "BC1.2 / QC handshake", why: "The phone drives 0.6 V on D+: the start of BC1.2 detection or a QC request." };
+  if (!isNaN(v) && v > 4) return { name: "Plain 5 V", why: "No CC and no D+/D− signature: legacy USB power." };
+  return { name: "No power", why: "The bus is off." };
+}
+function nominalName(v) {
+  if (isNaN(v)) return "–";
+  for (const n of NOMINAL) if (Math.abs(v - n) <= n * 0.06) return `${n} V`;
+  return `${v.toFixed(2)} V (variable, PPS/AVS)`;
+}
+
+/* ============================================================ chart */
+const cv = $("cv"), ctx = cv.getContext("2d"), hover = $("hover");
+let win = 60, paused = false, pauseEnd = 0, dirty = true, hoverX = null;
+const LANES = [
+  { key: "v", label: "V", color: "--v", unit: "V", d: 3 },
+  { key: "i", label: "A", color: "--i", unit: "A", d: 4 },
+  { key: "p", label: "W", color: "--p", unit: "W", d: 2 },
+];
+function css(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function lowerBound(a, x) { let lo = 0, hi = a.length; while (lo < hi) { const m = (lo + hi) >> 1; if (a[m] < x) lo = m + 1; else hi = m; } return lo; }
+function niceStep(span, n) { const raw = span / n, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p; return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p; }
+function view() {
+  const n = S.t.length; if (!n) return null;
+  const end = paused ? pauseEnd : S.t[n - 1];
+  const start = win ? Math.max(0, end - win) : 0;
+  return { start, end: win ? Math.max(end, start + win) : Math.max(end, 1) };
+}
+function draw() {
+  const dpr = devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+  if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+  const L = 58, R = 10, T = 6, B = 24, gap = 10, lh = (H - T - B - gap * 2) / 3;
+  const vw = view(), ink = css("--mute"), line = css("--line");
+  ctx.font = "11px system-ui, sans-serif";
+  if (!vw) { ctx.fillStyle = ink; ctx.fillText("Connect the meter, open a CSV or start the demo.", L, T + 20); return; }
+  const a = lowerBound(S.t, vw.start), b = Math.min(S.t.length, lowerBound(S.t, vw.end) + 1);
+  const X = (t) => L + (t - vw.start) / (vw.end - vw.start) * (W - L - R);
+  LANES.forEach((ln, k) => {
+    const y0 = T + k * (lh + gap), arr = S[ln.key];
+    let lo = Infinity, hi = -Infinity;
+    for (let j = a; j < b; j++) { const x = arr[j]; if (x < lo) lo = x; if (x > hi) hi = x; }
+    if (!isFinite(lo)) { lo = 0; hi = 1; }
+    if (ln.key !== "v") lo = Math.min(lo, 0);
+    if (hi - lo < (ln.key === "i" ? 0.001 : 0.01)) { const c = (hi + lo) / 2; lo = c - 0.01; hi = c + 0.01; }
+    const pad = (hi - lo) * 0.08; lo -= pad; hi += pad;
+    const Y = (x) => y0 + lh - (x - lo) / (hi - lo) * lh;
+    const step = niceStep(hi - lo, 4);
+    ctx.strokeStyle = line; ctx.lineWidth = 1; ctx.fillStyle = ink; ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    for (let g = Math.ceil(lo / step) * step; g <= hi; g += step) {
+      const y = Math.round(Y(g)) + .5; ctx.beginPath(); ctx.moveTo(L, y); ctx.lineTo(W - R, y); ctx.stroke();
+      ctx.fillText(+g.toFixed(6) + " " + ln.unit, L - 6, y);
+    }
+    /* min/max per pixel column, so peaks survive at any zoom */
+    ctx.strokeStyle = css(ln.color); ctx.lineWidth = 1.5; ctx.beginPath();
+    let col = -1, mn = 0, mx = 0, first = true;
+    const flush = () => { if (col < 0) return; const ya = Y(mx), yb = Y(mn); if (first) { ctx.moveTo(col, ya); first = false; } else ctx.lineTo(col, ya); if (yb - ya > 1) ctx.lineTo(col, yb); };
+    for (let j = a; j < b; j++) {
+      const c = Math.round(X(S.t[j])), x = arr[j];
+      if (c !== col) { flush(); col = c; mn = mx = x; } else { if (x < mn) mn = x; if (x > mx) mx = x; }
+    }
+    flush(); ctx.stroke();
+  });
+  /* time axis */
+  ctx.fillStyle = ink; ctx.textAlign = "center"; ctx.textBaseline = "top";
+  const ts = niceStep(vw.end - vw.start, 6);
+  for (let g = Math.ceil(vw.start / ts) * ts; g <= vw.end; g += ts) ctx.fillText(dur(g), X(g), H - B + 6);
+  /* hover crosshair */
+  if (hoverX !== null && hoverX >= L && hoverX <= W - R) {
+    const t = vw.start + (hoverX - L) / (W - L - R) * (vw.end - vw.start);
+    let j = Math.min(S.t.length - 1, lowerBound(S.t, t));
+    if (j > 0 && Math.abs(S.t[j - 1] - t) < Math.abs(S.t[j] - t)) j--;
+    ctx.strokeStyle = ink; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(hoverX + .5, T); ctx.lineTo(hoverX + .5, H - B); ctx.stroke(); ctx.setLineDash([]);
+    hover.innerHTML = `${dur(S.t[j])}<br>${S.v[j].toFixed(3)} V<br>${S.i[j].toFixed(4)} A<br>${S.p[j].toFixed(3)} W`;
+    hover.style.left = Math.min(hoverX + 12, W - 120) + "px"; hover.style.top = "10px"; hover.style.opacity = 1;
+  } else hover.style.opacity = 0;
+}
+let lastDraw = 0;
+function tick(now) {
+  if (dirty && now - lastDraw > 90) { draw(); refreshRead(); dirty = false; lastDraw = now; }
+  requestAnimationFrame(tick);
+}
+$("chart").addEventListener("pointermove", (e) => { hoverX = e.clientX - cv.getBoundingClientRect().left; dirty = true; });
+$("chart").addEventListener("pointerleave", () => { hoverX = null; dirty = true; });
+new ResizeObserver(() => { dirty = true; }).observe($("chart"));
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { dirty = true; });
+$("win").addEventListener("click", (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  win = +b.dataset.w; [...$("win").children].forEach((x) => x.setAttribute("aria-pressed", String(x === b))); dirty = true;
+});
+$("pause").addEventListener("click", () => {
+  paused = !paused; $("pause").setAttribute("aria-pressed", String(paused)); $("pause").textContent = paused ? "Resume view" : "Pause view";
+  if (paused && S.t.length) pauseEnd = S.t[S.t.length - 1]; dirty = true;
+});
+
+/* ============================================================ serial (Web Serial) */
+let port = null, writer = null, reading = false;
+function log(s) { const l = $("log"); l.textContent += s + "\n"; l.scrollTop = l.scrollHeight; }
+function warn(s) { const w = $("warn"); w.textContent = s; w.style.display = s ? "block" : "none"; }
+function pill(text, cls) { const p = $("pill"); p.textContent = text; p.className = "pill" + (cls ? " " + cls : ""); }
+
+async function connect() {
+  if (port) { await disconnect(); return; }
+  if (!("serial" in navigator)) { warn("This browser has no Web Serial. Use Chrome, Edge or Opera on a desktop, or log with host/meter.py and open the CSV here."); return; }
+  stopDemo();
+  try {
+    port = await navigator.serial.requestPort({ filters: [{ usbVendorId: 0x1209, usbProductId: 0x0001 }] });
+    await port.open({ baudRate: 115200 });          /* CDC ignores the rate */
+    await port.setSignals({ dataTerminalReady: true }); /* the meter only sends while DTR is set */
+  } catch (e) { port = null; if (e.name !== "NotFoundError") warn("Could not open the meter: " + e.message); return; }
+  warn(""); newSession(); S.source = "meter";
+  pill("Live", "live"); $("connect").textContent = "Disconnect";
+  writer = port.writable.getWriter();
+  send("info"); send("stream on"); send("every " + $("every").value);
+  readLoop();
+}
+async function readLoop() {
+  reading = true;
+  const dec = new TextDecoder(); let buf = "";
+  while (port && port.readable && reading) {
+    const rd = port.readable.getReader();
+    try {
+      for (;;) {
+        const { value, done } = await rd.read(); if (done) break;
+        buf += dec.decode(value, { stream: true });
+        let k; while ((k = buf.indexOf("\n")) >= 0) { onLine(buf.slice(0, k)); buf = buf.slice(k + 1); }
+      }
+    } catch (e) { warn("Connection lost: " + e.message); break; }
+    finally { rd.releaseLock(); }
+  }
+  if (port) await disconnect();
+}
+async function disconnect() {
+  reading = false;
+  const p = port; port = null;
+  try { writer && writer.releaseLock(); } catch (e) {}
+  writer = null;
+  try { p && await p.close(); } catch (e) {}
+  pill(S.t.length ? "Stopped" : "Not connected"); $("connect").textContent = "Connect meter";
+}
+async function send(c) {
+  if (demoTimer) { log("> " + c + "  (demo: ignored)"); return; }
+  if (!writer) { log("Not connected."); return; }
+  log("> " + c);
+  await writer.write(new TextEncoder().encode(c + "\n"));
+}
+navigator.serial && navigator.serial.addEventListener("disconnect", (e) => { if (port && e.target === port) { warn("The meter was unplugged."); disconnect(); } });
+
+$("connect").addEventListener("click", connect);
+$("every").addEventListener("change", (e) => send("every " + e.target.value));
+$("ct").addEventListener("change", (e) => send("ct " + e.target.value));
+$("range").addEventListener("change", (e) => send("range " + e.target.value));
+$("zero").addEventListener("click", () => send("zero"));
+$("resetq").addEventListener("click", () => send("reset"));
+$("save").addEventListener("click", () => send("save"));
+$("send").addEventListener("click", () => { const c = $("cmd").value.trim(); if (c) send(c); $("cmd").value = ""; });
+$("cmd").addEventListener("keydown", (e) => { if (e.key === "Enter") $("send").click(); });
+$("clear").addEventListener("click", () => { const src = S.source; newSession(); S.source = src; if (writer) send("reset"); });
+
+/* ============================================================ CSV import */
+$("file").addEventListener("change", async (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  stopDemo(); if (port) await disconnect();
+  newSession(); S.source = "file: " + f.name;
+  const text = await f.text();
+  for (const line of text.split(/\r?\n/)) if (!/^t_us/.test(line)) onLine(line);
+  pill(`File: ${S.t.length} points`); win = 0;
+  [...$("win").children].forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.w === "0")));
+  dirty = true; e.target.value = "";
+  if (S.t.length) analyse();
+});
+
+/* ============================================================ demo: a phone charging on USB PD, sped up 40x */
+let demoTimer = null;
+function stopDemo() { if (demoTimer) { clearInterval(demoTimer); demoTimer = null; } }
+function startDemo() {
+  if (port) disconnect();
+  stopDemo(); newSession(); S.source = "demo";
+  pill("Demo, 40× speed", "demo"); warn("");
+  const SPEED = 40, RATE = 25;               /* simulated lines per simulated second */
+  let tSim = 0, soc = 0.12, mah = 0, mwh = 0, lastSt = -1, us = 0;
+  const capWh = 4500 * 3.87 / 1000, eff = 0.86;
+  demoTimer = setInterval(() => {
+    const dtLine = 1 / RATE, n = Math.round(SPEED * 0.05 * RATE);
+    for (let k = 0; k < n; k++) {
+      tSim += dtLine; us = Math.round(tSim * 1e6) % 4294967296;
+      let v, i, cc = 1.65;
+      if (tSim < 0.6) { v = 5.07; i = 0.35; }                       /* 5 V while PD negotiates */
+      else {
+        const pdV = 9.0;
+        const cpPower = 25 * (soc < 0.55 ? 1 : soc < 0.9 ? Math.exp(-(soc - 0.55) * 3.2) : 0.33 * Math.exp(-(soc - 0.9) * 22));
+        v = soc > 0.97 ? 5.08 : pdV;                               /* phone drops back to 5 V near full */
+        i = Math.max(0.02, cpPower / v * (soc > 0.97 ? 0.35 : 1));
+        if (soc >= 1) i = 0.035 + 0.02 * Math.random();
+        v -= i * 0.085;                                             /* charger + cable droop, 85 mΩ */
+        cc = 0.55;                                                  /* PD traffic keeps CC around 0.5 V */
+      }
+      i += (Math.random() - 0.5) * 0.012 + (Math.random() < 0.004 ? 0.4 : 0);
+      v += (Math.random() - 0.5) * 0.004;
+      const p = v * i;
+      mah += i * dtLine / 3.6; mwh += p * dtLine / 3.6;
+      soc = Math.min(1, soc + p * dtLine / 3600 * eff / capWh);
+      onLine(`${us},${v.toFixed(4)},${i.toFixed(6)},${p.toFixed(5)},${i > 3.8 ? "C" : "F"}`);
+      if (Math.floor(tSim * 2) !== lastSt) {
+        lastSt = Math.floor(tSim * 2);
+        onLine(`#S,${us},${mah.toFixed(4)},${mwh.toFixed(4)},${tSim.toFixed(1)},${cc.toFixed(3)},0.000,0.000,0.000,${tSim < 0.6 ? "CC-3.0A" : "CC-default"}`);
+      }
+    }
+    if (tSim > 2.6 * 3600) stopDemo();
+  }, 50);
+  $("pStart").value = 12; $("pEnd").value = 100; $("cap").value = 4500;
+}
+$("demo").addEventListener("click", startDemo);
+
+/* ============================================================ analysis */
+function integrate(a, b) {
+  let ah = 0, wh = 0;
+  for (let j = a + 1; j < b; j++) { const dt = S.t[j] - S.t[j - 1]; if (dt > 5) continue; ah += S.i[j] * dt / 3600; wh += S.p[j] * dt / 3600; }
+  return { ah, wh };
+}
+function smooth(arr, t, secs) {           /* moving average over a time window */
+  const out = new Float64Array(arr.length); let a = 0, s = 0;
+  for (let j = 0; j < arr.length; j++) { s += arr[j]; while (t[j] - t[a] > secs) s -= arr[a++]; out[j] = s / (j - a + 1); }
+  return out;
+}
+function levelOf(v) { for (const n of NOMINAL) if (Math.abs(v - n) <= n * 0.06) return n; return null; }
+
+function analyse() {
+  const n = S.t.length;
+  if (n < 20) { $("repbody").innerHTML = '<div class="empty">Not enough data yet.</div>'; return; }
+  const T = S.t[n - 1] - S.t[0];
+  const tot = integrate(0, n);
+  const st = S.st.length ? S.st[S.st.length - 1] : null;
+  const ah = st && st.mah > 0 ? st.mah / 1000 : tot.ah;   /* the meter integrates every conversion */
+  const wh = st && st.mwh > 0 ? st.mwh / 1000 : tot.wh;
+  let pMax = 0, iMax = 0, vMin = Infinity, vMax = 0;
+  for (let j = 0; j < n; j++) { if (S.p[j] > pMax) pMax = S.p[j]; if (S.i[j] > iMax) iMax = S.i[j]; if (S.v[j] < vMin) vMin = S.v[j]; if (S.v[j] > vMax) vMax = S.v[j]; }
+  const pS = smooth(S.p, S.t, 20), iS = smooth(S.i, S.t, 20);
+  let pSMax = 0; for (let j = 0; j < n; j++) if (pS[j] > pSMax) pSMax = pS[j];
+
+  /* voltage levels: contiguous stretches at one nominal voltage */
+  const levels = []; let cur = null;
+  for (let j = 0; j < n; j++) {
+    const lv = levelOf(S.v[j]) ?? "var";
+    if (!cur || cur.lv !== lv) {
+      cur = { lv, a: j, b: j, t0: S.t[j], t1: S.t[j] }; levels.push(cur);
+    } else { cur.b = j; cur.t1 = S.t[j]; }
+  }
+  const lvl = {};
+  for (const L of levels) {
+    if (L.t1 - L.t0 < 1) continue;
+    const key = L.lv === "var" ? "variable" : L.lv + " V";
+    const e = integrate(L.a, L.b + 1);
+    const o = lvl[key] || (lvl[key] = { key, secs: 0, wh: 0, pMax: 0, xs: [], ys: [] });
+    o.secs += L.t1 - L.t0; o.wh += e.wh;
+    for (let j = L.a; j <= L.b; j += Math.max(1, Math.floor((L.b - L.a) / 4000))) { o.xs.push(S.i[j]); o.ys.push(S.v[j]); if (S.p[j] > o.pMax) o.pMax = S.p[j]; }
+  }
+  /* source resistance: V = V0 - R * I, fitted per voltage level (charger + cable + meter) */
+  for (const o of Object.values(lvl)) {
+    const m = o.xs.length; if (m < 50) continue;
+    let sx = 0, sy = 0, sxx = 0, sxy = 0, syy = 0, xmn = Infinity, xmx = -Infinity;
+    for (let k = 0; k < m; k++) { const x = o.xs[k], y = o.ys[k]; sx += x; sy += y; sxx += x * x; sxy += x * y; syy += y * y; if (x < xmn) xmn = x; if (x > xmx) xmx = x; }
+    const den = m * sxx - sx * sx; if (xmx - xmn < 0.3 || den <= 0) continue;
+    const slope = (m * sxy - sx * sy) / den, r2 = Math.pow(m * sxy - sx * sy, 2) / (den * (m * syy - sy * sy) || 1);
+    o.R = -slope; o.V0 = (sy - slope * sx) / m; o.r2 = r2; o.span = [xmn, xmx];
+  }
+
+  /* charging phases from the smoothed power */
+  let jPeakEnd = 0; for (let j = 0; j < n; j++) if (pS[j] >= 0.9 * pSMax) jPeakEnd = j;
+  let jFirstPeak = n - 1; for (let j = 0; j < n; j++) if (pS[j] >= 0.9 * pSMax) { jFirstPeak = j; break; }
+  let jFull = -1; for (let j = jPeakEnd; j < n; j++) if (iS[j] < Math.max(0.1, 0.05 * iMax)) { jFull = j; break; }
+  const phases = [
+    ["Start-up and negotiation", S.t[0], S.t[jFirstPeak]],
+    ["Fast charge (near peak power)", S.t[jFirstPeak], S.t[jPeakEnd]],
+    ["Taper (constant voltage)", S.t[jPeakEnd], jFull >= 0 ? S.t[jFull] : S.t[n - 1]],
+  ];
+  if (jFull >= 0) phases.push(["Full / trickle", S.t[jFull], S.t[n - 1]]);
+  const phRows = phases.filter(([, a, b]) => b - a > 1).map(([name, a, b]) => {
+    const ja = lowerBound(S.t, a), jb = lowerBound(S.t, b);
+    const e = integrate(ja, Math.max(ja + 1, jb));
+    return { name, from: a - S.t[0], secs: b - a, wh: e.wh, avgW: e.wh * 3600 / Math.max(1, b - a) };
+  });
+  /* time to deliver 50 / 80 / 100 % of the session's energy */
+  const marks = {}; { let acc = 0; const want = [0.5, 0.8, 0.99]; let w = 0;
+    for (let j = 1; j < n && w < want.length; j++) { const dt = S.t[j] - S.t[j - 1]; if (dt <= 5) acc += S.p[j] * dt / 3600; while (w < want.length && acc >= want[w] * tot.wh) { marks[want[w]] = S.t[j] - S.t[0]; w++; } } }
+  /* trickle draw once full */
+  let trickle = null; if (jFull >= 0 && S.t[n - 1] - S.t[jFull] > 60) { const e = integrate(jFull, n); trickle = e.wh * 3600 / (S.t[n - 1] - S.t[jFull]); }
+
+  /* battery estimate */
+  const p0 = parseFloat($("pStart").value), p1 = parseFloat($("pEnd").value), cap = parseFloat($("cap").value), vn = parseFloat($("vnom").value) || 3.87;
+  let batt = null;
+  if (!isNaN(p0) && !isNaN(p1) && p1 - p0 >= 20) {
+    const frac = (p1 - p0) / 100, whIn = tot.wh - (trickle ? trickle * (S.t[n - 1] - S.t[jFull]) / 3600 : 0);
+    const est = (eta) => whIn * eta / vn * 1000 / frac;
+    batt = { lo: est(0.80), mid: est(0.86), hi: est(0.92), frac };
+    if (cap > 0) batt.health = [batt.lo / cap * 100, batt.mid / cap * 100, batt.hi / cap * 100];
+  }
+
+  const proto = protocol(S.st.find((x) => x.t >= S.t[jFirstPeak]) || st, S.v[jFirstPeak]);
+  report = { generated: new Date().toISOString(), source: S.source, duration_s: T, points: n, charge_mAh: ah * 1000, energy_Wh: wh,
+    peak_power_W: pMax, sustained_power_W: pSMax, peak_current_A: iMax, v_min: vMin, v_max: vMax, protocol: proto.name,
+    levels: Object.values(lvl).map(({ key, secs, wh, pMax, R, V0, r2, span }) => ({ level: key, secs, wh, pMax, R_ohm: R, V0, r2, i_span: span })),
+    phases: phRows, time_to_energy: { "50%": marks[0.5], "80%": marks[0.8], "99%": marks[0.99] }, trickle_W: trickle, battery: batt,
+    inputs: { start_pct: p0, end_pct: p1, rated_mAh: cap, cell_V: vn } };
+  renderReport(report);
+  ["csv", "json", "print"].forEach((id) => { $(id).disabled = false; });
+}
+
+function renderReport(r) {
+  const kpi = (k, v, sub) => `<div class="kpi"><div class="k">${k}</div><div class="val">${v}</div>${sub ? `<div class="sub">${sub}</div>` : ""}</div>`;
+  let verdict = `Charged for <b>${dur(r.duration_s)}</b> using <b>${r.protocol}</b>; peak ${r.peak_power_W.toFixed(1)} W, sustained ${r.sustained_power_W.toFixed(1)} W.`;
+  if (r.battery && r.battery.health) {
+    const [lo, mid, hi] = r.battery.health;
+    const word = mid >= 90 ? "in good condition" : mid >= 80 ? "showing normal wear" : mid >= 70 ? "noticeably worn" : "heavily worn, or the inputs are off";
+    verdict += ` The battery looks <b>${word}</b>: about ${mid.toFixed(0)} % of rated capacity (range ${lo.toFixed(0)}–${hi.toFixed(0)} %).`;
+  }
+  const best = r.levels.filter((x) => x.R_ohm !== undefined && x.r2 > 0.3).sort((a, b) => b.wh - a.wh)[0];
+  if (best) verdict += ` Voltage sag points to about <b>${(best.R_ohm * 1000).toFixed(0)} mΩ</b> in the charger and cable at ${best.level}.`;
+  let h = `<div class="verdict">${verdict}</div><div class="kpis">`;
+  h += kpi("Energy delivered", r.energy_Wh.toFixed(2) + " Wh", r.charge_mAh.toFixed(0) + " mAh at bus voltage");
+  h += kpi("Duration", dur(r.duration_s), r.points.toLocaleString() + " readings");
+  h += kpi("Peak power", r.peak_power_W.toFixed(1) + " W", "sustained (20 s) " + r.sustained_power_W.toFixed(1) + " W");
+  h += kpi("Peak current", r.peak_current_A.toFixed(3) + " A", "bus " + r.v_min.toFixed(2) + "–" + r.v_max.toFixed(2) + " V");
+  h += kpi("Half the energy in", r.time_to_energy["50%"] ? dur(r.time_to_energy["50%"]) : "–", "80 % in " + (r.time_to_energy["80%"] ? dur(r.time_to_energy["80%"]) : "–"));
+  if (r.battery) h += kpi("Battery capacity (est.)", r.battery.mid.toFixed(0) + " mAh", `${r.battery.lo.toFixed(0)}–${r.battery.hi.toFixed(0)} mAh for 80–92 % charging efficiency`);
+  if (r.trickle_W !== null) h += kpi("Draw when full", (r.trickle_W * 1000).toFixed(0) + " mW", "after charging stopped");
+  h += `</div><div class="cols"><div><h2>Charging phases</h2><table><tr><th>Phase</th><th>Starts</th><th>Length</th><th>Energy</th><th>Avg power</th></tr>`;
+  h += r.phases.map((p) => `<tr><td>${p.name}</td><td>${dur(p.from)}</td><td>${dur(p.secs)}</td><td>${p.wh.toFixed(2)} Wh</td><td>${p.avgW.toFixed(1)} W</td></tr>`).join("");
+  h += `</table></div><div><h2>Voltage levels used</h2><table><tr><th>Level</th><th>Time</th><th>Energy</th><th>Peak</th><th>Source R</th></tr>`;
+  h += r.levels.map((l) => `<tr><td>${l.level}</td><td>${dur(l.secs)}</td><td>${l.wh.toFixed(2)} Wh</td><td>${l.pMax.toFixed(1)} W</td><td>${l.R_ohm !== undefined && l.r2 > 0.3 ? (l.R_ohm * 1000).toFixed(0) + " mΩ" : "–"}</td></tr>`).join("");
+  h += `</table><p class="note">Source R is the slope of voltage against current at one level: charger output, cable and the meter's own few tens of mΩ (shunt, traces, connectors) together. Under 150 mΩ is good; several hundred points to a thin or worn cable.</p></div></div>`;
+  if (!r.battery) h += `<p class="note">Enter the battery % at the start and end (at least 20 points apart) and the rated capacity for a battery-health estimate.</p>`;
+  else h += `<p class="note">Battery estimate: energy in × charging efficiency ÷ cell voltage ÷ share of the battery filled. Phones report % from their own model, so treat ±10 % as normal spread. Start below 20 % and charge to 100 % for the best figure.</p>`;
+  $("repbody").innerHTML = h;
+}
+$("analyse").addEventListener("click", analyse);
+
+/* ============================================================ export */
+function download(name, text, type) {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+const fileStamp = () => S.started.toISOString().slice(0, 16).replace(/[:T]/g, "-");
+$("csv").addEventListener("click", () => {
+  const out = ["t_s,voltage_V,current_A,power_W,range"];
+  for (let j = 0; j < S.t.length; j++) out.push(`${S.t[j].toFixed(6)},${S.v[j]},${S.i[j]},${S.p[j]},${S.r[j]}`);
+  download(`usb-meter-${fileStamp()}.csv`, out.join("\n"), "text/csv");
+});
+$("json").addEventListener("click", () => download(`usb-meter-report-${fileStamp()}.json`, JSON.stringify(report, null, 2), "application/json"));
+$("print").addEventListener("click", () => { win = 0; dirty = true; draw(); window.print(); });
+
+/* CSV written by this page uses seconds; meter.py logs use microseconds. Accept both. */
+const _onLine = onLine;
+onLine = function (line) {
+  const m = line.match(/^(\d+\.\d+),/);
+  if (m) line = Math.round(parseFloat(m[1]) * 1e6) + line.slice(m[1].length);
+  _onLine(line);
+};
+
+newSession();
+requestAnimationFrame(tick);
+if (!("serial" in navigator)) $("connect").title = "Needs Chrome, Edge or Opera on a desktop";
+</script>
+</body>
+</html>

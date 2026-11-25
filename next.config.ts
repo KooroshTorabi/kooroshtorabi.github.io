@@ -13,6 +13,13 @@ const nextConfig: NextConfig = {
         permanent: false,
         locale: false,
       },
+      {
+        // PC app for the rev D USB-C power meter
+        source: "/:locale(en|fa|de)?/ina228-current-profiler/app",
+        destination: "/ina228-current-profiler/app/index.html",
+        permanent: false,
+        locale: false,
+      },
     ];
   },
   i18n: {
